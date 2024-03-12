@@ -1,6 +1,6 @@
 package me.jaeyeop.tickethub.auth.application.service
 
-import me.jaeyeop.tickethub.auth.adaptor.`in`.requset.LoginRequest
+import me.jaeyeop.tickethub.auth.adaptor.`in`.request.LoginRequest
 import me.jaeyeop.tickethub.auth.application.port.`in`.AuthQueryUseCase
 import me.jaeyeop.tickethub.auth.domain.TokenPair
 import org.springframework.stereotype.Service

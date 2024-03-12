@@ -1,6 +1,6 @@
 package me.jaeyeop.tickethub.auth.adaptor.`in`
 
-import me.jaeyeop.tickethub.auth.adaptor.`in`.requset.LoginRequest
+import me.jaeyeop.tickethub.auth.adaptor.`in`.request.LoginRequest
 import me.jaeyeop.tickethub.auth.adaptor.`in`.response.LoginResponse
 import me.jaeyeop.tickethub.auth.application.port.`in`.AuthQueryUseCase
 import me.jaeyeop.tickethub.support.endpoint.AUTH_URL
