@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  db:
+    container_name: ticket-hub-db
+    restart: always
+    image: mysql:8.3.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root-password
+      MYSQL_DATABASE: ticket-hub
+      MYSQL_USER: username
+      MYSQL_PASSWORD: password
+      TZ: Asia/Seoul
+    ports:
+      - '3306:3306'
+    volumes:
+      - ticket-hub-db:/var/lib/mysql
+
+volumes:
+  ticket-hub-db:

@@ -1,0 +1,20 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/ticket-hub
+    username: username
+    password: password
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        default_batch_fetch_size: 100
+        globally_quoted_identifiers: true
+        globally_quoted_identifiers_skip_column_definitions: true
+        use_sql_comments: true
+        show_sql: true
+        format_sql: true
+    show-sql: true
+
