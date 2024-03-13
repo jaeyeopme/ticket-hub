@@ -32,7 +32,7 @@ class AuthWebAdaptorTest : RestDocsSupport() {
 
         given(authQueryUseCase.login(request)).willReturn(tokenPair)
 
-        given()
+        mockMvc
             .contentType(ContentType.JSON)
             .body(convert(request))
             .post(URI.create("${AUTH_URL}${LOGIN_ENDPOINT}"))

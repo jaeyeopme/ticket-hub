@@ -22,7 +22,7 @@ import java.nio.charset.Charset
 @ExtendWith(RestDocumentationExtension::class)
 abstract class RestDocsSupport {
 
-    private lateinit var mockMvc: MockMvcRequestSpecification
+    protected lateinit var mockMvc: MockMvcRequestSpecification
 
     private val resultHandler: RestDocumentationResultHandler =
         document("{class-name}/{method-name}")
@@ -46,10 +46,6 @@ abstract class RestDocsSupport {
                 .alwaysDo<StandaloneMockMvcBuilder>(resultHandler)
                 .build()
         )
-    }
-
-    protected fun given(): MockMvcRequestSpecification {
-        return mockMvc
     }
 
     protected fun document(vararg snippets: Snippet): RestDocumentationResultHandler? {

@@ -1,11 +1,13 @@
 package me.jaeyeop.tickethub.member.adaptor.`in`
 
 import me.jaeyeop.tickethub.member.adaptor.`in`.request.CreateMemberRequest
+import me.jaeyeop.tickethub.member.application.port.`in`.MemberCommandUseCase
 import me.jaeyeop.tickethub.support.RestDocsSupport
 import me.jaeyeop.tickethub.support.endpoint.MEMBER_URL
 import io.restassured.http.ContentType
-import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.mockito.BDDMockito.willDoNothing
+import org.mockito.Mockito.mock
 import org.springframework.http.HttpStatus
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
@@ -13,9 +15,10 @@ import java.net.URI
 
 class MemberWebAdaptorTest : RestDocsSupport() {
 
-    @DisplayName("회원가입")
+    private val memberCommandUseCase = mock(MemberCommandUseCase::class.java)
+
     @Test
-    fun `success create member`() {
+    fun `회원가입 성공`() {
         val request = CreateMemberRequest(
             email = "email@email.com",
             password = "password",
@@ -23,8 +26,11 @@ class MemberWebAdaptorTest : RestDocsSupport() {
             phoneNumber = "nickname"
         )
 
-        given()
+        willDoNothing().given(memberCommandUseCase).create(request)
+
+        mockMvc
             .contentType(ContentType.JSON)
+            .body(convert(request))
             .post(URI.create(MEMBER_URL))
             .then()
             .status(HttpStatus.CREATED)
@@ -41,7 +47,7 @@ class MemberWebAdaptorTest : RestDocsSupport() {
     }
 
     override fun controller(): Any {
-        return MemberWebAdaptor()
+        return MemberWebAdaptor(memberCommandUseCase)
     }
 
 }
