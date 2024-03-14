@@ -2,6 +2,7 @@ package me.jaeyeop.tickethub.support
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import me.jaeyeop.tickethub.support.error.ApiControllerAdvice
 import io.restassured.module.mockmvc.RestAssuredMockMvc
 import io.restassured.module.mockmvc.specification.MockMvcRequestSpecification
 import org.junit.jupiter.api.BeforeEach
@@ -22,18 +23,21 @@ import java.nio.charset.Charset
 @ExtendWith(RestDocumentationExtension::class)
 abstract class RestDocsSupport {
 
-    protected lateinit var mockMvc: MockMvcRequestSpecification
+    private lateinit var mockMvc: MockMvcRequestSpecification
 
     private val resultHandler: RestDocumentationResultHandler =
         document("{class-name}/{method-name}")
 
     private val objectMapper: ObjectMapper = jacksonObjectMapper()
 
+    protected fun given() = mockMvc
+
     @BeforeEach
     fun setup(provider: RestDocumentationContextProvider) {
         mockMvc = RestAssuredMockMvc.given().mockMvc(
             MockMvcBuilders
                 .standaloneSetup(controller())
+                .setControllerAdvice(ApiControllerAdvice())
                 .defaultResponseCharacterEncoding<StandaloneMockMvcBuilder>(Charset.defaultCharset())
                 .apply<StandaloneMockMvcBuilder>(
                     documentationConfiguration(provider)
@@ -48,13 +52,10 @@ abstract class RestDocsSupport {
         )
     }
 
-    protected fun document(vararg snippets: Snippet): RestDocumentationResultHandler? {
-        return resultHandler.document(*snippets)
-    }
+    protected fun document(vararg snippets: Snippet): RestDocumentationResultHandler =
+        resultHandler.document(*snippets)
 
-    protected fun <T> convert(obj: T): String {
-        return objectMapper.writeValueAsString(obj)
-    }
+    protected fun <T> convert(obj: T): String = objectMapper.writeValueAsString(obj)
 
     protected abstract fun controller(): Any
 

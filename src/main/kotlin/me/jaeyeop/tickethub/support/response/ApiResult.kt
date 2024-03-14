@@ -1,8 +1,10 @@
 package me.jaeyeop.tickethub.support.response
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 
+@JsonPropertyOrder("data")
 data class ApiResult<T>(
     val data: T?,
 ) {

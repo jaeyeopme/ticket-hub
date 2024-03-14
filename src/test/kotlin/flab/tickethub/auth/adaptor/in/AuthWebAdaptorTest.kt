@@ -9,10 +9,10 @@ import me.jaeyeop.tickethub.support.endpoint.LOGIN_ENDPOINT
 import io.restassured.http.ContentType
 import org.hamcrest.core.IsEqual.equalTo
 import org.junit.jupiter.api.Test
-import org.mockito.BDDMockito.any
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito.mock
 import org.springframework.http.HttpStatus
+import org.springframework.restdocs.payload.JsonFieldType
 import org.springframework.restdocs.payload.PayloadDocumentation.*
 import java.net.URI
 
@@ -33,7 +33,7 @@ class AuthWebAdaptorTest : RestDocsSupport() {
 
         given(authQueryUseCase.login(request)).willReturn(tokenPair)
 
-        mockMvc
+        given()
             .contentType(ContentType.JSON)
             .body(convert(request))
             .post(URI.create("${AUTH_URL}${LOGIN_ENDPOINT}"))
@@ -46,13 +46,15 @@ class AuthWebAdaptorTest : RestDocsSupport() {
             .apply(
                 document(
                     requestFields(
-                        fieldWithPath("email").description("이메일"),
-                        fieldWithPath("password").description("비밀번호"),
+                        fieldWithPath("email").type(JsonFieldType.STRING)
+                            .description("이메일"),
+                        fieldWithPath("password").type(JsonFieldType.STRING)
+                            .description("비밀번호"),
                     ),
                     responseFields(
-                        fieldWithPath("data.accessToken")
+                        fieldWithPath("data.accessToken").type(JsonFieldType.STRING)
                             .description("엑세스 토큰"),
-                        fieldWithPath("data.refreshToken")
+                        fieldWithPath("data.refreshToken").type(JsonFieldType.STRING)
                             .description("리프레시 토큰"),
                     )
                 )
