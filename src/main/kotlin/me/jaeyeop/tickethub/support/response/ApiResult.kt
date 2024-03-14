@@ -4,17 +4,18 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 
 data class ApiResult<T>(
-    private val body: T? = null,
-    private val status: HttpStatus,
-) : ResponseEntity<T>(body, status) {
+    val data: T?,
+) {
 
     companion object {
-        fun <T> created(): ApiResult<T> {
-            return ApiResult(status = HttpStatus.CREATED);
+        fun created(): ResponseEntity<Unit> {
+            return ResponseEntity.status(HttpStatus.CREATED).build()
         }
 
-        fun <T> ok(body: T): ApiResult<T> {
-            return ApiResult(status = HttpStatus.OK, body = body);
+        fun <T> ok(data: T): ResponseEntity<ApiResult<T>> {
+            val body = ApiResult(data)
+
+            return ResponseEntity(body, HttpStatus.OK)
         }
     }
 

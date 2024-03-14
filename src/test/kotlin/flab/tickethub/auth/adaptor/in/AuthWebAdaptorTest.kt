@@ -9,6 +9,7 @@ import me.jaeyeop.tickethub.support.endpoint.LOGIN_ENDPOINT
 import io.restassured.http.ContentType
 import org.hamcrest.core.IsEqual.equalTo
 import org.junit.jupiter.api.Test
+import org.mockito.BDDMockito.any
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito.mock
 import org.springframework.http.HttpStatus
@@ -39,8 +40,8 @@ class AuthWebAdaptorTest : RestDocsSupport() {
             .then()
             .status(HttpStatus.OK)
             .body(
-                "accessToken", equalTo("accessToken"),
-                "refreshToken", equalTo("refreshToken")
+                "data.accessToken", equalTo("accessToken"),
+                "data.refreshToken", equalTo("refreshToken")
             )
             .apply(
                 document(
@@ -49,9 +50,9 @@ class AuthWebAdaptorTest : RestDocsSupport() {
                         fieldWithPath("password").description("비밀번호"),
                     ),
                     responseFields(
-                        fieldWithPath("accessToken")
+                        fieldWithPath("data.accessToken")
                             .description("엑세스 토큰"),
-                        fieldWithPath("refreshToken")
+                        fieldWithPath("data.refreshToken")
                             .description("리프레시 토큰"),
                     )
                 )

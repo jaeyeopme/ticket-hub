@@ -4,6 +4,7 @@ import me.jaeyeop.tickethub.member.adaptor.`in`.request.CreateMemberRequest
 import me.jaeyeop.tickethub.member.application.port.`in`.MemberCommandUseCase
 import me.jaeyeop.tickethub.support.endpoint.MEMBER_URL
 import me.jaeyeop.tickethub.support.response.ApiResult
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -16,7 +17,7 @@ class MemberWebAdaptor(
 ) {
 
     @PostMapping
-    fun create(@RequestBody request: CreateMemberRequest): ApiResult<Unit> {
+    fun create(@RequestBody request: CreateMemberRequest): ResponseEntity<Unit> {
         memberCommandUseCase.create(request)
         return ApiResult.created()
     }
