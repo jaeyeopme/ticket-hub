@@ -4,8 +4,7 @@ import me.jaeyeop.tickethub.auth.adaptor.`in`.request.LoginRequest
 import me.jaeyeop.tickethub.auth.application.port.`in`.AuthQueryUseCase
 import me.jaeyeop.tickethub.auth.domain.TokenPair
 import me.jaeyeop.tickethub.support.RestDocsSupport
-import me.jaeyeop.tickethub.support.endpoint.AUTH_URL
-import me.jaeyeop.tickethub.support.endpoint.LOGIN_ENDPOINT
+import me.jaeyeop.tickethub.support.constant.ApiEndpoint
 import io.restassured.http.ContentType
 import org.hamcrest.core.IsEqual.equalTo
 import org.junit.jupiter.api.Test
@@ -36,7 +35,7 @@ class AuthWebAdaptorTest : RestDocsSupport() {
         given()
             .contentType(ContentType.JSON)
             .body(convert(request))
-            .post(URI.create("${AUTH_URL}${LOGIN_ENDPOINT}"))
+            .post(URI.create("${ApiEndpoint.AUTH}${ApiEndpoint.LOGIN_ENDPOINT}"))
             .then()
             .status(HttpStatus.OK)
             .body(

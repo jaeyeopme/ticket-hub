@@ -9,6 +9,7 @@ enum class ErrorCode(
     val logLevel: LogLevel,
 ) {
 
-    DUPLICATED_MEMBER_EMAIL(HttpStatus.CONFLICT, "이미 존재하는 이메일입니다.", LogLevel.ERROR)
+    DUPLICATED_MEMBER_EMAIL(HttpStatus.CONFLICT, "이미 존재하는 이메일입니다.", LogLevel.ERROR),
+    INVALID_INPUT_VALUE(HttpStatus.BAD_REQUEST, "잘못된 입력 값이 존재합니다.", LogLevel.ERROR)
 
 }

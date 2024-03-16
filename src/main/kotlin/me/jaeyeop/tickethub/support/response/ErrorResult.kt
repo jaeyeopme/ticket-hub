@@ -5,18 +5,18 @@ import me.jaeyeop.tickethub.support.error.ErrorCode
 import org.springframework.http.ResponseEntity
 
 @JsonPropertyOrder("code", "message", "data")
-data class ErrorResult(
+data class ErrorResult<T>(
     val code: ErrorCode,
-    val data: Any?
+    val data: T?
 ) {
 
     val message: String = code.message
 
     companion object {
-        fun of(
+        fun <T> of(
             errorCode: ErrorCode,
-            data: Any?
-        ): ResponseEntity<ErrorResult> {
+            data: T?
+        ): ResponseEntity<ErrorResult<T>> {
             val body = ErrorResult(errorCode, data)
 
             return ResponseEntity(body, errorCode.httpStatus)

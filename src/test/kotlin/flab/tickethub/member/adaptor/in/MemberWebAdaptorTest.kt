@@ -3,7 +3,7 @@ package me.jaeyeop.tickethub.member.adaptor.`in`
 import me.jaeyeop.tickethub.member.adaptor.`in`.request.CreateMemberRequest
 import me.jaeyeop.tickethub.member.application.port.`in`.MemberCommandUseCase
 import me.jaeyeop.tickethub.support.RestDocsSupport
-import me.jaeyeop.tickethub.support.endpoint.MEMBER_URL
+import me.jaeyeop.tickethub.support.constant.ApiEndpoint
 import me.jaeyeop.tickethub.support.error.ApiException
 import me.jaeyeop.tickethub.support.error.ErrorCode
 import io.restassured.http.ContentType
@@ -28,7 +28,7 @@ class MemberWebAdaptorTest : RestDocsSupport() {
             email = "email@email.com",
             password = "password",
             name = "name",
-            phoneNumber = "nickname"
+            phoneNumber = "01012345678"
         )
 
         willDoNothing().given(memberCommandUseCase).create(request)
@@ -36,7 +36,7 @@ class MemberWebAdaptorTest : RestDocsSupport() {
         given()
             .contentType(ContentType.JSON)
             .body(convert(request))
-            .post(URI.create(MEMBER_URL))
+            .post(URI.create(ApiEndpoint.MEMBER))
             .then()
             .status(HttpStatus.CREATED)
             .apply(
@@ -61,7 +61,7 @@ class MemberWebAdaptorTest : RestDocsSupport() {
             email = "email@email.com",
             password = "password",
             name = "name",
-            phoneNumber = "nickname"
+            phoneNumber = "01012345678"
         )
 
         given(memberCommandUseCase.create(request)).willThrow(ApiException(ErrorCode.DUPLICATED_MEMBER_EMAIL))
@@ -69,7 +69,7 @@ class MemberWebAdaptorTest : RestDocsSupport() {
         given()
             .contentType(ContentType.JSON)
             .body(convert(request))
-            .post(URI.create(MEMBER_URL))
+            .post(URI.create(ApiEndpoint.MEMBER))
             .then()
             .status(HttpStatus.CONFLICT)
             .body(
