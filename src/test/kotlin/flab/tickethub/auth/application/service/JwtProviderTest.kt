@@ -1,6 +1,7 @@
 package me.jaeyeop.tickethub.auth.application.service
 
 import me.jaeyeop.tickethub.auth.domain.TokenPayload
+import me.jaeyeop.tickethub.support.config.time.DateTimeProvider
 import me.jaeyeop.tickethub.support.domain.Identifiable
 import me.jaeyeop.tickethub.support.error.ApiException
 import me.jaeyeop.tickethub.support.error.ErrorCode
@@ -9,9 +10,9 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
-import java.time.Clock
 import java.time.Duration
 import java.time.temporal.ChronoUnit
+import java.util.*
 
 class JwtProviderTest {
 
@@ -27,8 +28,7 @@ class JwtProviderTest {
         val refreshKey = "lsakjdflkajsdl;kfj;salkdjfl;ksajd;lfkjasl;kjdfl;kasjdl;fkjas;l"
         val accessExp = Duration.ofMinutes(10)
         val refreshExp = Duration.ofDays(180)
-
-        val clock = Clock.systemDefaultZone()
+        val now = Date()
 
         tokenProvider = JwtProvider(
             jwtProperties = JwtProperties(
@@ -37,7 +37,9 @@ class JwtProviderTest {
                 accessExp = accessExp,
                 refreshExp = refreshExp,
             ),
-            clock = clock
+            dateTimeProvider = object : DateTimeProvider {
+                override fun nowDate() = now
+            }
         )
 
         expiredTokenProvider = JwtProvider(
@@ -47,7 +49,10 @@ class JwtProviderTest {
                 accessExp = accessExp,
                 refreshExp = refreshExp,
             ),
-            clock = Clock.fixed(clock.instant().minus(10, ChronoUnit.MINUTES), clock.zone)
+            dateTimeProvider = object : DateTimeProvider {
+                override fun nowDate() =
+                    Date.from(now.toInstant().minus(10, ChronoUnit.MINUTES))
+            }
         )
 
         invalidKeyTokenProvider = JwtProvider(
@@ -57,7 +62,9 @@ class JwtProviderTest {
                 accessExp = accessExp,
                 refreshExp = refreshExp,
             ),
-            clock = clock
+            dateTimeProvider = object : DateTimeProvider {
+                override fun nowDate() = now
+            }
         )
     }
 
@@ -102,19 +109,35 @@ class JwtProviderTest {
         assertThrows<ApiException>(
             ErrorCode.INVALID_TOKEN.message
         ) { tokenProvider.validateAccessToken(invalidKeyAccessToken) }
+    }
 
-        val blankAccessToken = ""
-
-        assertThrows<ApiException>(
-            ErrorCode.INVALID_TOKEN.message
-        ) { tokenProvider.validateAccessToken(blankAccessToken) }
-
+    @Test
+    fun `잘못된 형식의 엑세스 토큰 검증 실패`() {
+        val tokenPayload = TokenPayload(
+            object : Identifiable {
+                override fun id(): Long = 1L
+            }
+        )
         val nonPrefixAccessToken =
             tokenProvider.generateAccessToken(tokenPayload).removePrefix(BEARER_PREFIX)
 
         assertThrows<ApiException>(
             ErrorCode.INVALID_TOKEN.message
         ) { tokenProvider.validateAccessToken(nonPrefixAccessToken) }
+    }
+
+    @Test
+    fun `비어있는 엑세스 토큰 검증 실패`() {
+        val tokenPayload = TokenPayload(
+            object : Identifiable {
+                override fun id(): Long = 1L
+            }
+        )
+        val blankAccessToken = ""
+
+        assertThrows<ApiException>(
+            ErrorCode.INVALID_TOKEN.message
+        ) { tokenProvider.validateAccessToken(blankAccessToken) }
     }
 
 }

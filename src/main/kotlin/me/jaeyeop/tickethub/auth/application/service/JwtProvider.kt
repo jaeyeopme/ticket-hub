@@ -3,6 +3,7 @@ package me.jaeyeop.tickethub.auth.application.service
 import me.jaeyeop.tickethub.auth.application.port.out.TokenProvider
 import me.jaeyeop.tickethub.auth.domain.TokenPair
 import me.jaeyeop.tickethub.auth.domain.TokenPayload
+import me.jaeyeop.tickethub.support.config.time.DateTimeProvider
 import me.jaeyeop.tickethub.support.error.ApiException
 import me.jaeyeop.tickethub.support.error.ErrorCode
 import me.jaeyeop.tickethub.support.properties.JwtProperties
@@ -12,7 +13,7 @@ import io.jsonwebtoken.JwtException
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys
 import org.springframework.stereotype.Component
-import java.time.Clock
+import java.time.Duration
 import java.util.*
 import javax.crypto.SecretKey
 
@@ -21,7 +22,7 @@ const val BEARER_PREFIX = "Bearer "
 @Component
 class JwtProvider(
     private val jwtProperties: JwtProperties,
-    private val clock: Clock
+    private val dateTimeProvider: DateTimeProvider
 ) : TokenProvider {
 
     private val accessSecretKey =
@@ -39,7 +40,7 @@ class JwtProvider(
     override fun generateAccessToken(tokenPayload: TokenPayload): String {
         return generateToken(
             accessSecretKey,
-            jwtProperties.accessExp.toMillis(),
+            jwtProperties.accessExp,
             tokenPayload.claims
         )
     }
@@ -47,7 +48,7 @@ class JwtProvider(
     override fun generateRefreshToken(tokenPayload: TokenPayload): String {
         return generateToken(
             refreshSecretKey,
-            jwtProperties.refreshExp.toMillis(),
+            jwtProperties.refreshExp,
             tokenPayload.claims
         )
     }
@@ -62,15 +63,15 @@ class JwtProvider(
 
     private fun generateToken(
         secretKey: SecretKey,
-        exp: Long,
+        exp: Duration,
         claims: Map<String, Any>
     ): String {
-        val instant = clock.instant()
+        val now = dateTimeProvider.nowDate()
 
         return BEARER_PREFIX + Jwts.builder()
             .signWith(secretKey, Jwts.SIG.HS256)
-            .issuedAt(Date.from(instant))
-            .expiration(Date.from(instant.plusMillis(exp)))
+            .issuedAt(now)
+            .expiration(Date.from(now.toInstant().plus(exp)))
             .claims(claims)
             .compact()
     }
@@ -98,7 +99,7 @@ class JwtProvider(
     ): Claims {
         return Jwts.parser()
             .verifyWith(secretKey)
-            .clock { Date.from(clock.instant()) }
+            .clock { dateTimeProvider.nowDate() }
             .build()
             .parseSignedClaims(token)
             .payload
