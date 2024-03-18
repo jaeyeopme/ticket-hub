@@ -3,9 +3,9 @@ package me.jaeyeop.tickethub.auth.application.service
 import me.jaeyeop.tickethub.auth.application.port.out.TokenProvider
 import me.jaeyeop.tickethub.auth.domain.TokenPair
 import me.jaeyeop.tickethub.auth.domain.TokenPayload
-import me.jaeyeop.tickethub.support.properties.JwtProperties
 import me.jaeyeop.tickethub.support.error.ApiException
 import me.jaeyeop.tickethub.support.error.ErrorCode
+import me.jaeyeop.tickethub.support.properties.JwtProperties
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.JwtException
@@ -40,7 +40,7 @@ class JwtProvider(
         return generateToken(
             accessSecretKey,
             jwtProperties.accessExp.toMillis(),
-            tokenPayload.toClaims()
+            tokenPayload.claims
         )
     }
 
@@ -48,7 +48,7 @@ class JwtProvider(
         return generateToken(
             refreshSecretKey,
             jwtProperties.refreshExp.toMillis(),
-            tokenPayload.toClaims()
+            tokenPayload.claims
         )
     }
 

@@ -1,20 +1,13 @@
 package me.jaeyeop.tickethub.member.domain
 
 import me.jaeyeop.tickethub.member.adaptor.`in`.request.CreateMemberRequest
-import jakarta.persistence.*
-import org.springframework.data.annotation.CreatedDate
-import org.springframework.data.annotation.LastModifiedDate
-import org.springframework.data.jpa.domain.support.AuditingEntityListener
+import me.jaeyeop.tickethub.support.domain.AbstractEntity
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
 import java.time.LocalDateTime
 
-@EntityListeners(AuditingEntityListener::class)
 @Entity
 class Member(
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Id
-    @Column
-    val id: Long? = null,
-
     @Column(name = "refresh_token", unique = true)
     var refreshToken: String? = null,
 
@@ -30,17 +23,9 @@ class Member(
     @Column(name = "phone_number", unique = true)
     val phoneNumber: String,
 
-    @CreatedDate
-    @Column(name = "created_at", updatable = false)
-    private val createdAt: LocalDateTime? = null,
-
-    @LastModifiedDate
-    @Column(name = "modified_at")
-    private val modifiedAt: LocalDateTime? = null,
-
     @Column(name = "deleted_at")
-    private val deletedAt: LocalDateTime? = null,
-) {
+    private var deletedAt: LocalDateTime? = null,
+) : AbstractEntity() {
 
     companion object {
         fun from(

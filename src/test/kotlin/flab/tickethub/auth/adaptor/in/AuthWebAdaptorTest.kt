@@ -2,11 +2,11 @@ package me.jaeyeop.tickethub.auth.adaptor.`in`
 
 import me.jaeyeop.tickethub.auth.adaptor.`in`.request.LoginRequest
 import me.jaeyeop.tickethub.auth.application.port.`in`.AuthQueryUseCase
-import me.jaeyeop.tickethub.auth.application.port.out.TokenProvider
 import me.jaeyeop.tickethub.auth.domain.TokenPair
 import me.jaeyeop.tickethub.auth.domain.TokenPayload
 import me.jaeyeop.tickethub.support.RestDocsSupport
 import me.jaeyeop.tickethub.support.constant.ApiEndpoint
+import me.jaeyeop.tickethub.support.domain.Identifiable
 import me.jaeyeop.tickethub.support.error.ApiException
 import me.jaeyeop.tickethub.support.error.ErrorCode
 import io.restassured.http.ContentType
@@ -26,23 +26,25 @@ class AuthWebAdaptorTest : RestDocsSupport() {
 
     private val authCommandUseCase = mock(AuthCommandUseCase::class.java)
 
-    private val tokenProvider = mock(TokenProvider::class.java)
-
     @Test
     fun `로그인 성공`() {
         val request = LoginRequest(
             email = "email@email.com",
             password = "password",
         )
-        val tokenPayload = TokenPayload(1L)
+        val identifiable = object : Identifiable {
+            override fun id(): Long = 1L
+        }
+
+        val tokenPayload = TokenPayload(identifiable)
         val tokenPair = TokenPair(
-            memberId = 1L,
+            memberId = identifiable,
             accessToken = "accessToken",
             refreshToken = "refreshToken"
         )
 
         given(authQueryUseCase.login(request)).willReturn(tokenPayload)
-        given(tokenProvider.generateTokenPair(tokenPayload)).willReturn(tokenPair)
+        given(authCommandUseCase.updateRefreshToken(tokenPayload)).willReturn(tokenPair)
 
         given()
             .contentType(ContentType.JSON)
@@ -95,7 +97,7 @@ class AuthWebAdaptorTest : RestDocsSupport() {
     }
 
     override fun controller(): Any {
-        return AuthWebAdaptor(authQueryUseCase, authCommandUseCase, tokenProvider)
+        return AuthWebAdaptor(authQueryUseCase, authCommandUseCase)
     }
 
 }

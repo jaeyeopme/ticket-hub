@@ -19,4 +19,6 @@ enum class ErrorCode(
 
     INVALID_EMAIL_OR_PASSWORD(HttpStatus.UNAUTHORIZED, "잘못된 이메일 또는 비밀번호입니다.", LogLevel.ERROR),
 
+    NOT_FOUND_IDENTITY(HttpStatus.NOT_FOUND, "존재하지 않는 식별자입니다.", LogLevel.ERROR)
+
 }

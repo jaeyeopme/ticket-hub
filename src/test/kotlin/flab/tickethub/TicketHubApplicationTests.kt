@@ -7,7 +7,6 @@ import org.springframework.boot.test.context.SpringBootTest
 @SpringBootTest
 class TicketHubApplicationTests {
 
-    @Disabled
     @Test
     fun contextLoads() {
     }

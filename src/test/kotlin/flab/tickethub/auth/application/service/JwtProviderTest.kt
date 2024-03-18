@@ -1,9 +1,10 @@
 package me.jaeyeop.tickethub.auth.application.service
 
 import me.jaeyeop.tickethub.auth.domain.TokenPayload
-import me.jaeyeop.tickethub.support.properties.JwtProperties
+import me.jaeyeop.tickethub.support.domain.Identifiable
 import me.jaeyeop.tickethub.support.error.ApiException
 import me.jaeyeop.tickethub.support.error.ErrorCode
+import me.jaeyeop.tickethub.support.properties.JwtProperties
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
@@ -63,7 +64,9 @@ class JwtProviderTest {
     @Test
     fun `엑세스 토큰 검증 성공`() {
         val tokenPayload = TokenPayload(
-            memberId = 98
+            object : Identifiable {
+                override fun id(): Long = 1L
+            }
         )
 
         val accessToken = tokenProvider.generateAccessToken(tokenPayload)
@@ -74,7 +77,9 @@ class JwtProviderTest {
     @Test
     fun `만료된 엑세스 토큰 검증 실패`() {
         val tokenPayload = TokenPayload(
-            memberId = 98
+            object : Identifiable {
+                override fun id(): Long = 1L
+            }
         )
 
         val expiredAccessToken = expiredTokenProvider.generateAccessToken(tokenPayload)
@@ -87,7 +92,9 @@ class JwtProviderTest {
     @Test
     fun `잘못된 엑세스 토큰 검증 실패`() {
         val tokenPayload = TokenPayload(
-            memberId = 98
+            object : Identifiable {
+                override fun id(): Long = 1L
+            }
         )
 
         val invalidKeyAccessToken = invalidKeyTokenProvider.generateAccessToken(tokenPayload)
