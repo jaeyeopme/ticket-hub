@@ -36,11 +36,13 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     runtimeOnly("com.mysql:mysql-connector-j")
 
-    testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("io.rest-assured:spring-mock-mvc")
+
+    testImplementation("org.springframework.security:spring-security-test")
+
     testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
     testImplementation("org.springframework.restdocs:spring-restdocs-restassured")
-    testImplementation("io.rest-assured:spring-mock-mvc")
 }
 
 tasks.withType<KotlinCompile> {

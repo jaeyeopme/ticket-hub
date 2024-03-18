@@ -5,7 +5,7 @@ import io.jsonwebtoken.Claims
 private const val MEMBER_ID_KEY = "memberId"
 
 class TokenPayload(
-    private val memberId: Long
+    val memberId: Long
 ) {
 
     constructor(claims: Claims) : this((claims[MEMBER_ID_KEY] as Int).toLong())

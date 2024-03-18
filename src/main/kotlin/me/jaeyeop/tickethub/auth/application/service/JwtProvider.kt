@@ -36,7 +36,7 @@ class JwtProvider(
     override fun generateTokenPair(tokenPayload: TokenPayload): TokenPair {
         val accessToken = generateAccessToken(tokenPayload)
         val refreshToken = generateRefreshToken(tokenPayload)
-        return TokenPair(accessToken, refreshToken)
+        return TokenPair(tokenPayload.memberId, accessToken, refreshToken)
     }
 
     override fun generateAccessToken(tokenPayload: TokenPayload): String {

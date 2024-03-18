@@ -19,4 +19,12 @@ class MemberPersistenceAdaptor(
         return memberCrudRepository.existsByEmail(email)
     }
 
+    override fun findByEmail(email: String): Member? {
+        return memberCrudRepository.findByEmail(email)
+    }
+
+    override fun findById(memberId: Long): Member? {
+        return memberCrudRepository.findById(memberId).get()
+    }
+
 }

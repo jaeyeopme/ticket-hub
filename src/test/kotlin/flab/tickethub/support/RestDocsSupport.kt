@@ -1,12 +1,13 @@
 package me.jaeyeop.tickethub.support
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import me.jaeyeop.tickethub.support.error.ApiControllerAdvice
 import io.restassured.module.mockmvc.RestAssuredMockMvc
 import io.restassured.module.mockmvc.specification.MockMvcRequestSpecification
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.extension.ExtendWith
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.json.JsonTest
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.restdocs.RestDocumentationContextProvider
 import org.springframework.restdocs.RestDocumentationExtension
@@ -20,15 +21,17 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.test.web.servlet.setup.StandaloneMockMvcBuilder
 import java.nio.charset.Charset
 
+@JsonTest
 @ExtendWith(RestDocumentationExtension::class)
 abstract class RestDocsSupport {
 
     private lateinit var mockMvc: MockMvcRequestSpecification
 
+    @Autowired
+    private lateinit var objectMapper: ObjectMapper
+
     private val resultHandler: RestDocumentationResultHandler =
         document("{class-name}/{method-name}")
-
-    private val objectMapper: ObjectMapper = jacksonObjectMapper()
 
     protected fun given() = mockMvc
 

@@ -10,27 +10,37 @@ import java.time.LocalDateTime
 @EntityListeners(AuditingEntityListener::class)
 @Entity
 class Member(
-    private var email: String,
-    private var password: String,
-    private var name: String,
-    private var phoneNumber: String
-) {
-
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column
-    private val id: Long? = null
+    val id: Long? = null,
+
+    @Column(name = "refresh_token", unique = true)
+    var refreshToken: String? = null,
+
+    @Column(name = "email", unique = true)
+    val email: String,
+
+    @Column(name = "password")
+    val password: String,
+
+    @Column(name = "name")
+    val name: String,
+
+    @Column(name = "phone_number", unique = true)
+    val phoneNumber: String,
 
     @CreatedDate
     @Column(name = "created_at", updatable = false)
-    private var createdAt: LocalDateTime? = null
+    private val createdAt: LocalDateTime? = null,
 
     @LastModifiedDate
     @Column(name = "modified_at")
-    private var modifiedAt: LocalDateTime? = null
+    private val modifiedAt: LocalDateTime? = null,
 
     @Column(name = "deleted_at")
-    private var deletedAt: LocalDateTime? = null
+    private val deletedAt: LocalDateTime? = null,
+) {
 
     companion object {
         fun from(
