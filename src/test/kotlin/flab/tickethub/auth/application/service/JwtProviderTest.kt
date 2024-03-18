@@ -1,6 +1,7 @@
 package me.jaeyeop.tickethub.auth.application.service
 
 import me.jaeyeop.tickethub.auth.domain.TokenPayload
+import me.jaeyeop.tickethub.support.properties.JwtProperties
 import me.jaeyeop.tickethub.support.error.ApiException
 import me.jaeyeop.tickethub.support.error.ErrorCode
 import org.junit.jupiter.api.BeforeEach
@@ -8,6 +9,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import java.time.Clock
+import java.time.Duration
 import java.time.temporal.ChronoUnit
 
 class JwtProviderTest {
@@ -20,29 +22,40 @@ class JwtProviderTest {
 
     @BeforeEach
     fun setUp() {
+        val accessKey = "asdfj08wqer98124j12l41k2h3lj1h2klj3h12lk"
+        val refreshKey = "lsakjdflkajsdl;kfj;salkdjfl;ksajd;lfkjasl;kjdfl;kasjdl;fkjas;l"
+        val accessExp = Duration.ofMinutes(10)
+        val refreshExp = Duration.ofDays(180)
+
         val clock = Clock.systemDefaultZone()
 
         tokenProvider = JwtProvider(
-            accessKey = "asdfj08wqer98124j12l41k2h3lj1h2klj3h12lk",
-            refreshKey = "lsakjdflkajsdl;kfj;salkdjfl;ksajd;lfkjasl;kjdfl;kasjdl;fkjas;l",
-            accessExp = 1000L,
-            refreshExp = 5000L,
+            jwtProperties = JwtProperties(
+                accessKey = accessKey,
+                refreshKey = refreshKey,
+                accessExp = accessExp,
+                refreshExp = refreshExp,
+            ),
             clock = clock
         )
 
         expiredTokenProvider = JwtProvider(
-            accessKey = "asdfj08wqer98124j12l41k2h3lj1h2klj3h12lk",
-            refreshKey = "lsakjdflkajsdl;kfj;salkdjfl;ksajd;lfkjasl;kjdfl;kasjdl;fkjas;l",
-            accessExp = 1000L,
-            refreshExp = 5000L,
+            jwtProperties = JwtProperties(
+                accessKey = accessKey,
+                refreshKey = refreshKey,
+                accessExp = accessExp,
+                refreshExp = refreshExp,
+            ),
             clock = Clock.fixed(clock.instant().minus(10, ChronoUnit.MINUTES), clock.zone)
         )
 
         invalidKeyTokenProvider = JwtProvider(
-            accessKey = "asdfj08wqer98124j12l41k2h3lj1h2klj3h12lk_INVALID_KEY",
-            refreshKey = "lsakjdflkajsdl;kfj;salkdjfl;ksajd;lfkjasl;kjdfl;kasjdl;fkjas;l_INVALID_KEY",
-            accessExp = 1000L,
-            refreshExp = 5000L,
+            jwtProperties = JwtProperties(
+                accessKey = "INVALID_ACCESS_TOKEN_INVALID_ACCESS_TOKEN_INVALID_ACCESS_TOKEN",
+                refreshKey = "INVALID_REFRESH_TOKEN_INVALID_REFRESH_TOKEN_INVALID_REFRESH_TOKEN",
+                accessExp = accessExp,
+                refreshExp = refreshExp,
+            ),
             clock = clock
         )
     }

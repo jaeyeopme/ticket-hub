@@ -3,6 +3,7 @@ package me.jaeyeop.tickethub.auth.application.service
 import me.jaeyeop.tickethub.auth.application.port.out.TokenProvider
 import me.jaeyeop.tickethub.auth.domain.TokenPair
 import me.jaeyeop.tickethub.auth.domain.TokenPayload
+import me.jaeyeop.tickethub.support.properties.JwtProperties
 import me.jaeyeop.tickethub.support.error.ApiException
 import me.jaeyeop.tickethub.support.error.ErrorCode
 import io.jsonwebtoken.Claims
@@ -10,7 +11,6 @@ import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.JwtException
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import java.time.Clock
 import java.util.*
@@ -20,18 +20,15 @@ const val BEARER_PREFIX = "Bearer "
 
 @Component
 class JwtProvider(
-    @Value("\${jwt.access.key}") accessKey: String,
-    @Value("\${jwt.refresh.key}") refreshKey: String,
-    @Value("\${jwt.refresh.exp}") private val accessExp: Long,
-    @Value("\${jwt.access.exp}") private val refreshExp: Long,
+    private val jwtProperties: JwtProperties,
     private val clock: Clock
 ) : TokenProvider {
 
     private val accessSecretKey =
-        Keys.hmacShaKeyFor(accessKey.toByteArray(Charsets.UTF_8))
+        Keys.hmacShaKeyFor(jwtProperties.accessKey.toByteArray(Charsets.UTF_8))
 
     private val refreshSecretKey =
-        Keys.hmacShaKeyFor(refreshKey.toByteArray(Charsets.UTF_8))
+        Keys.hmacShaKeyFor(jwtProperties.refreshKey.toByteArray(Charsets.UTF_8))
 
     override fun generateTokenPair(tokenPayload: TokenPayload): TokenPair {
         val accessToken = generateAccessToken(tokenPayload)
@@ -42,7 +39,7 @@ class JwtProvider(
     override fun generateAccessToken(tokenPayload: TokenPayload): String {
         return generateToken(
             accessSecretKey,
-            accessExp,
+            jwtProperties.accessExp.toMillis(),
             tokenPayload.toClaims()
         )
     }
@@ -50,7 +47,7 @@ class JwtProvider(
     override fun generateRefreshToken(tokenPayload: TokenPayload): String {
         return generateToken(
             refreshSecretKey,
-            refreshExp,
+            jwtProperties.refreshExp.toMillis(),
             tokenPayload.toClaims()
         )
     }

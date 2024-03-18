@@ -30,11 +30,10 @@ spring:
     show-sql: true
 
 jwt:
-  access:
-    key: asdfj08wqer98124j12l41k2h3lj1h2klj3h12lk
-    # 10 minutes in milliseconds
-    exp: 600_000
-  refresh:
-    key: il12u4o8i12ojnf1o4u12l1k2h3klu12g4ilchb21ljhjw
-    # 6 months in milliseconds
-    exp: 15_778_476_000
+  access-key: asdfj08wqer98124j12l41k2h3lj1h2klj3h12lk
+  # 10 minutes
+  access-exp: 10m
+  refresh-key: il12u4o8i12ojnf1o4u12l1k2h3klu12g4ilchb21ljhjw
+  # 6 months
+  refresh-exp: 180d
+
