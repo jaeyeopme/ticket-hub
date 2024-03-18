@@ -33,10 +33,13 @@ class Member(
     private var deletedAt: LocalDateTime? = null
 
     companion object {
-        fun from(request: CreateMemberRequest): Member {
+        fun from(
+            request: CreateMemberRequest,
+            encodedPassword: String
+        ): Member {
             return Member(
                 email = request.email,
-                password = request.password,
+                password = encodedPassword,
                 name = request.name,
                 phoneNumber = request.phoneNumber
             )
