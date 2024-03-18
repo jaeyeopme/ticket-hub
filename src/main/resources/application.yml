@@ -2,6 +2,9 @@ server:
   shutdown: graceful
 
 spring:
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
+
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/ticket-hub
@@ -21,4 +24,3 @@ spring:
         format_sql: true
         highlight_sql: true
     show-sql: true
-

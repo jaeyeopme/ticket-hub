@@ -30,12 +30,13 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-validation")
 
-//    implementation("org.springframework.boot:spring-boot-starter-security")
-//    testImplementation("org.springframework.security:spring-security-test")
+    implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("io.jsonwebtoken:jjwt:0.12.5")
 
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     runtimeOnly("com.mysql:mysql-connector-j")
 
+    testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
     testImplementation("org.springframework.restdocs:spring-restdocs-restassured")
