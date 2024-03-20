@@ -15,9 +15,7 @@ data class TokenPayload(
         )
 
     constructor(claims: Claims) : this(
-        object : Identifiable {
-            override fun id(): Long? = claims[MEMBER_ID_KEY] as Long?
-        }
+        Identifiable { claims[MEMBER_ID_KEY] as Long? }
     )
 
 }

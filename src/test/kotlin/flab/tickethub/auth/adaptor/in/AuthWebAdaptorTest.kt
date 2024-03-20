@@ -32,9 +32,7 @@ class AuthWebAdaptorTest : RestDocsSupport() {
             email = "email@email.com",
             password = "password",
         )
-        val identifiable = object : Identifiable {
-            override fun id(): Long = 1L
-        }
+        val identifiable = Identifiable { 1L }
 
         val tokenPayload = TokenPayload(identifiable)
         val tokenPair = TokenPair(

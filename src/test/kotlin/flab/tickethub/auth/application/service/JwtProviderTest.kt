@@ -2,7 +2,6 @@ package me.jaeyeop.tickethub.auth.application.service
 
 import me.jaeyeop.tickethub.auth.domain.TokenPayload
 import me.jaeyeop.tickethub.support.config.time.DateTimeProvider
-import me.jaeyeop.tickethub.support.domain.Identifiable
 import me.jaeyeop.tickethub.support.error.ApiException
 import me.jaeyeop.tickethub.support.error.ErrorCode
 import me.jaeyeop.tickethub.support.properties.JwtProperties
@@ -70,11 +69,7 @@ class JwtProviderTest {
 
     @Test
     fun `엑세스 토큰 검증 성공`() {
-        val tokenPayload = TokenPayload(
-            object : Identifiable {
-                override fun id(): Long = 1L
-            }
-        )
+        val tokenPayload = TokenPayload { 1L }
 
         val accessToken = tokenProvider.generateAccessToken(tokenPayload)
 
@@ -83,11 +78,7 @@ class JwtProviderTest {
 
     @Test
     fun `만료된 엑세스 토큰 검증 실패`() {
-        val tokenPayload = TokenPayload(
-            object : Identifiable {
-                override fun id(): Long = 1L
-            }
-        )
+        val tokenPayload = TokenPayload { 1L }
 
         val expiredAccessToken = expiredTokenProvider.generateAccessToken(tokenPayload)
 
@@ -98,11 +89,7 @@ class JwtProviderTest {
 
     @Test
     fun `잘못된 엑세스 토큰 검증 실패`() {
-        val tokenPayload = TokenPayload(
-            object : Identifiable {
-                override fun id(): Long = 1L
-            }
-        )
+        val tokenPayload = TokenPayload { 1L }
 
         val invalidKeyAccessToken = invalidKeyTokenProvider.generateAccessToken(tokenPayload)
 
@@ -113,11 +100,7 @@ class JwtProviderTest {
 
     @Test
     fun `잘못된 형식의 엑세스 토큰 검증 실패`() {
-        val tokenPayload = TokenPayload(
-            object : Identifiable {
-                override fun id(): Long = 1L
-            }
-        )
+        val tokenPayload = TokenPayload { 1L }
         val nonPrefixAccessToken =
             tokenProvider.generateAccessToken(tokenPayload).removePrefix(BEARER_PREFIX)
 
@@ -128,11 +111,6 @@ class JwtProviderTest {
 
     @Test
     fun `비어있는 엑세스 토큰 검증 실패`() {
-        val tokenPayload = TokenPayload(
-            object : Identifiable {
-                override fun id(): Long = 1L
-            }
-        )
         val blankAccessToken = ""
 
         assertThrows<ApiException>(
