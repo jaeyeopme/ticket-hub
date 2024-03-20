@@ -1,6 +1,7 @@
 package me.jaeyeop.tickethub.support.config
 
 import me.jaeyeop.tickethub.support.constant.ApiEndpoint
+import me.jaeyeop.tickethub.support.security.TokenAuthenticationFilter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
@@ -9,10 +10,13 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 
 @EnableWebSecurity
 @Configuration
-class SecurityConfig {
+class SecurityConfig(
+    private val tokenAuthenticationFilter: TokenAuthenticationFilter
+) {
 
     @Bean
     fun securityFilterChain(httpSecurity: HttpSecurity): SecurityFilterChain {
@@ -38,10 +42,17 @@ class SecurityConfig {
                 it.anyRequest().authenticated()
             }
 
+        httpSecurity
+            .addFilterBefore(
+                tokenAuthenticationFilter,
+                UsernamePasswordAuthenticationFilter::class.java
+            )
+
         return httpSecurity.build()
     }
 
     @Bean
-    fun passwordEncoder() = Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8()
+    fun passwordEncoder(): Argon2PasswordEncoder =
+        Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8()
 
 }

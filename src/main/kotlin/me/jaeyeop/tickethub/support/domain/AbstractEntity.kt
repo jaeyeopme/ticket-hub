@@ -22,6 +22,6 @@ abstract class AbstractEntity(
     private val modifiedAt: LocalDateTime? = null,
 ) : Identifiable {
 
-    override fun id(): Long? = id
+    final override fun id(): Long? = id
 
 }

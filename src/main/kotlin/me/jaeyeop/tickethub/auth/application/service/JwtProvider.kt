@@ -53,12 +53,12 @@ class JwtProvider(
         )
     }
 
-    override fun validateAccessToken(token: String) {
-        validateToken(token, accessSecretKey)
+    override fun validateAccessToken(token: String): TokenPayload {
+        return validateToken(token, accessSecretKey)
     }
 
-    override fun validateRefreshToken(token: String) {
-        validateToken(token, refreshSecretKey)
+    override fun validateRefreshToken(token: String): TokenPayload {
+        return validateToken(token, refreshSecretKey)
     }
 
     private fun generateToken(
