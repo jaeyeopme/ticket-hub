@@ -19,11 +19,10 @@ class MemberCommandService(
 
     override fun create(request: CreateMemberRequest) {
         validateExistsEmail(request.email)
-        val encodedPassword = passwordEncoder.encode(request.password)
 
         val member = Member.from(
             request = request,
-            encodedPassword = encodedPassword
+            passwordEncoder::encode
         )
         memberCommandPort.create(member)
     }
