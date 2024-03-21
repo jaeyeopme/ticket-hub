@@ -2,11 +2,11 @@ package me.jaeyeop.tickethub.auth.adaptor.`in`
 
 import me.jaeyeop.tickethub.auth.adaptor.`in`.request.LoginRequest
 import me.jaeyeop.tickethub.auth.application.port.`in`.AuthQueryUseCase
-import me.jaeyeop.tickethub.auth.domain.TokenPair
 import me.jaeyeop.tickethub.auth.domain.TokenPayload
+import me.jaeyeop.tickethub.auth.domain.TokenPair
+import me.jaeyeop.tickethub.member.domain.Role
 import me.jaeyeop.tickethub.support.RestDocsSupport
 import me.jaeyeop.tickethub.support.constant.ApiEndpoint
-import me.jaeyeop.tickethub.support.domain.Identifiable
 import me.jaeyeop.tickethub.support.error.ApiException
 import me.jaeyeop.tickethub.support.error.ErrorCode
 import io.restassured.http.ContentType
@@ -28,17 +28,20 @@ class AuthWebAdaptorTest : RestDocsSupport() {
 
     @Test
     fun `로그인 성공`() {
+        val tokenPayload = object : TokenPayload {
+            override fun id() = 1L
+            override fun role() = Role.BUYER
+        }
+
+        val tokenPair = TokenPair(
+            accessToken = "accessToken",
+            refreshToken = "refreshToken",
+            tokenPayload = tokenPayload
+        )
+
         val request = LoginRequest(
             email = "email@email.com",
             password = "password",
-        )
-        val identifiable = Identifiable { 1L }
-
-        val tokenPayload = TokenPayload(identifiable)
-        val tokenPair = TokenPair(
-            memberId = identifiable,
-            accessToken = "accessToken",
-            refreshToken = "refreshToken"
         )
 
         given(authQueryUseCase.login(request)).willReturn(tokenPayload)

@@ -9,6 +9,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.AuthenticationException
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
 import org.springframework.stereotype.Component
@@ -49,10 +50,9 @@ class TokenAuthenticationFilter(
         request: HttpServletRequest
     ): Authentication {
         return UsernamePasswordAuthenticationToken.authenticated(
-            tokenPayload.memberId,
+            tokenPayload.id(),
             null,
-            // TODO: 권한 정보 처리 필요
-            emptyList()
+            listOf(SimpleGrantedAuthority(tokenPayload.role().name))
         ).apply {
             details = WebAuthenticationDetailsSource().buildDetails(request)
         }

@@ -1,5 +1,6 @@
 package me.jaeyeop.tickethub.member.domain
 
+import me.jaeyeop.tickethub.auth.domain.TokenPayload
 import me.jaeyeop.tickethub.member.adaptor.`in`.request.CreateMemberRequest
 import me.jaeyeop.tickethub.support.domain.AbstractEntity
 import jakarta.persistence.Column
@@ -32,7 +33,7 @@ class Member(
 
     @Column(name = "deleted_at")
     private var deletedAt: LocalDateTime? = null,
-) : AbstractEntity() {
+) : AbstractEntity(), TokenPayload {
 
     companion object {
         fun from(
@@ -47,5 +48,7 @@ class Member(
             )
         }
     }
+
+    override fun role(): Role = role
 
 }

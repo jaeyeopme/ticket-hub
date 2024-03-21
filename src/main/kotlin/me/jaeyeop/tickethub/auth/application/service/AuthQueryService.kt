@@ -26,7 +26,7 @@ class AuthQueryService(
             actualPassword = member.password
         )
 
-        return TokenPayload(member)
+        return member
     }
 
     private fun validatePassword(

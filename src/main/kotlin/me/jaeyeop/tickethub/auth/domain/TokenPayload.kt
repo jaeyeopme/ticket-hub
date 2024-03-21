@@ -1,21 +1,30 @@
 package me.jaeyeop.tickethub.auth.domain
 
-import me.jaeyeop.tickethub.support.domain.Identifiable
+import me.jaeyeop.tickethub.member.domain.Role
 import io.jsonwebtoken.Claims
 
 private const val MEMBER_ID_KEY = "memberId"
+private const val MEMBER_ROLE_KEY = "memberRole"
 
-data class TokenPayload(
-    val memberId: Identifiable
-) {
+interface TokenPayload {
 
-    val claims: Map<String, Any> =
+    fun id(): Long
+
+    fun role(): Role
+
+    fun claims(): Map<String, Any> =
         mapOf(
-            MEMBER_ID_KEY to memberId
+            MEMBER_ID_KEY to id(),
+            MEMBER_ROLE_KEY to role()
         )
 
-    constructor(claims: Claims) : this(
-        Identifiable { claims[MEMBER_ID_KEY] as Long? }
-    )
+    companion object {
+        fun from(claims: Claims): TokenPayload {
+            return object : TokenPayload {
+                override fun id() = claims[MEMBER_ID_KEY] as Long
+                override fun role() = claims[MEMBER_ROLE_KEY] as Role
+            }
+        }
+    }
 
 }
