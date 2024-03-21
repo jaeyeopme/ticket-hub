@@ -36,7 +36,7 @@ class SecurityConfig(
                     .requestMatchers(
                         HttpMethod.POST,
                         ApiEndpoint.MEMBER,
-                        ApiEndpoint.MEMBER + ApiEndpoint.LOGIN_ENDPOINT
+                        ApiEndpoint.AUTH + ApiEndpoint.LOGIN_ENDPOINT
                     )
                     .permitAll()
                 it.anyRequest().authenticated()

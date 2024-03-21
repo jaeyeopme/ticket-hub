@@ -9,6 +9,8 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
+import org.springframework.security.authentication.BadCredentialsException
+import org.springframework.security.authentication.CredentialsExpiredException
 import java.time.Duration
 import java.time.temporal.ChronoUnit
 import java.util.*
@@ -82,7 +84,7 @@ class JwtProviderTest {
 
         val expiredAccessToken = expiredTokenProvider.generateAccessToken(tokenPayload)
 
-        assertThrows<ApiException>(
+        assertThrows<CredentialsExpiredException>(
             ErrorCode.EXPIRED_TOKEN.message
         ) { tokenProvider.validateAccessToken(expiredAccessToken) }
     }
@@ -93,7 +95,7 @@ class JwtProviderTest {
 
         val invalidKeyAccessToken = invalidKeyTokenProvider.generateAccessToken(tokenPayload)
 
-        assertThrows<ApiException>(
+        assertThrows<BadCredentialsException>(
             ErrorCode.INVALID_TOKEN.message
         ) { tokenProvider.validateAccessToken(invalidKeyAccessToken) }
     }
@@ -104,7 +106,7 @@ class JwtProviderTest {
         val nonPrefixAccessToken =
             tokenProvider.generateAccessToken(tokenPayload).removePrefix(BEARER_PREFIX)
 
-        assertThrows<ApiException>(
+        assertThrows<BadCredentialsException>(
             ErrorCode.INVALID_TOKEN.message
         ) { tokenProvider.validateAccessToken(nonPrefixAccessToken) }
     }
@@ -113,7 +115,7 @@ class JwtProviderTest {
     fun `비어있는 엑세스 토큰 검증 실패`() {
         val blankAccessToken = ""
 
-        assertThrows<ApiException>(
+        assertThrows<BadCredentialsException>(
             ErrorCode.INVALID_TOKEN.message
         ) { tokenProvider.validateAccessToken(blankAccessToken) }
     }

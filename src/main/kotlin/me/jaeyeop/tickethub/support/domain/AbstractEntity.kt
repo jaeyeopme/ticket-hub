@@ -15,11 +15,11 @@ abstract class AbstractEntity(
 
     @CreatedDate
     @Column(name = "created_at", updatable = false)
-    private val createdAt: LocalDateTime? = null,
+    private var createdAt: LocalDateTime? = null,
 
     @LastModifiedDate
     @Column(name = "modified_at")
-    private val modifiedAt: LocalDateTime? = null,
+    private var modifiedAt: LocalDateTime? = null,
 ) : Identifiable {
 
     final override fun id(): Long? = id
