@@ -7,17 +7,28 @@ import org.springframework.http.ResponseEntity
 @JsonPropertyOrder("code", "message", "data")
 data class ErrorResult<T>(
     val code: ErrorCode,
-    val data: T?
+    val data: T? = null
 ) {
 
-    val message: String = code.message
+    val message = code.message
 
     companion object {
+        fun from(
+            errorCode: ErrorCode,
+        ): ResponseEntity<ErrorResult<Unit>> {
+            val body = ErrorResult<Unit>(errorCode)
+
+            return ResponseEntity(body, errorCode.httpStatus)
+        }
+
         fun <T> of(
             errorCode: ErrorCode,
             data: T?
         ): ResponseEntity<ErrorResult<T>> {
-            val body = ErrorResult(errorCode, data)
+            val body = ErrorResult(
+                code = errorCode,
+                data = data
+            )
 
             return ResponseEntity(body, errorCode.httpStatus)
         }
