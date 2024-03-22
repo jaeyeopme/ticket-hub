@@ -1,4 +1,4 @@
-package me.jaeyeop.tickethub.auth.application.service
+package me.jaeyeop.tickethub.support.security
 
 import me.jaeyeop.tickethub.auth.domain.TokenPayload
 import me.jaeyeop.tickethub.member.domain.Role

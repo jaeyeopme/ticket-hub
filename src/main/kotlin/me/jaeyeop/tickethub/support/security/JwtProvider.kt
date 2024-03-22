@@ -1,6 +1,5 @@
-package me.jaeyeop.tickethub.auth.application.service
+package me.jaeyeop.tickethub.support.security
 
-import me.jaeyeop.tickethub.auth.application.port.out.TokenProvider
 import me.jaeyeop.tickethub.auth.domain.TokenPayload
 import me.jaeyeop.tickethub.auth.domain.TokenPair
 import me.jaeyeop.tickethub.support.config.time.DateTimeProvider

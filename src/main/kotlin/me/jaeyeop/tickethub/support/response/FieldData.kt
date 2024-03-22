@@ -13,8 +13,8 @@ data class FieldData private constructor(
         fun of(it: FieldError) =
             FieldData(
                 fieldName = it.field,
-                value = it.rejectedValue?.toString() ?: "",
-                reason = it.defaultMessage ?: "",
+                value = it.rejectedValue?.toString().orEmpty(),
+                reason = it.defaultMessage.orEmpty()
             )
     }
 }

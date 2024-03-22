@@ -3,6 +3,8 @@ package me.jaeyeop.tickethub.member.domain
 import me.jaeyeop.tickethub.auth.domain.TokenPayload
 import me.jaeyeop.tickethub.member.adaptor.`in`.request.CreateMemberRequest
 import me.jaeyeop.tickethub.support.domain.AbstractEntity
+import me.jaeyeop.tickethub.support.error.ApiException
+import me.jaeyeop.tickethub.support.error.ErrorCode
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
@@ -13,7 +15,7 @@ import kotlin.reflect.KFunction1
 @Entity
 class Member(
     @Column(name = "refresh_token", unique = true)
-    var refreshToken: String? = null,
+    private var refreshToken: String? = null,
 
     @Column(name = "email", unique = true)
     val email: String,
@@ -49,6 +51,17 @@ class Member(
         }
     }
 
-    override fun role(): Role = role
+    override fun id() = id
+        ?: throw ApiException(ErrorCode.NOT_FOUND_IDENTITY)
+
+    override fun role() = role
+
+    fun login(refreshToken: String) {
+        this.refreshToken = refreshToken
+    }
+
+    fun logout() {
+        this.refreshToken = null
+    }
 
 }

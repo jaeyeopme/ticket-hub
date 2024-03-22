@@ -2,18 +2,21 @@ package me.jaeyeop.tickethub.auth.adaptor.`in`
 
 import me.jaeyeop.tickethub.auth.adaptor.`in`.request.LoginRequest
 import me.jaeyeop.tickethub.auth.application.port.`in`.AuthQueryUseCase
-import me.jaeyeop.tickethub.auth.domain.TokenPayload
+import me.jaeyeop.tickethub.auth.domain.MemberPrincipal
 import me.jaeyeop.tickethub.auth.domain.TokenPair
+import me.jaeyeop.tickethub.auth.domain.TokenPayload
 import me.jaeyeop.tickethub.member.domain.Role
 import me.jaeyeop.tickethub.support.RestDocsSupport
 import me.jaeyeop.tickethub.support.constant.ApiEndpoint
 import me.jaeyeop.tickethub.support.error.ApiException
 import me.jaeyeop.tickethub.support.error.ErrorCode
+import me.jaeyeop.tickethub.support.security.WithMockMember
 import io.restassured.http.ContentType
 import org.hamcrest.core.IsEqual.equalTo
 import org.hamcrest.core.IsNull.nullValue
 import org.junit.jupiter.api.Test
 import org.mockito.BDDMockito.given
+import org.mockito.BDDMockito.willDoNothing
 import org.mockito.Mockito.mock
 import org.springframework.http.HttpStatus
 import org.springframework.restdocs.payload.JsonFieldType
@@ -22,9 +25,9 @@ import java.net.URI
 
 class AuthWebAdaptorTest : RestDocsSupport() {
 
-    private val authQueryUseCase = mock(AuthQueryUseCase::class.java)
+    private val authQueryUseCase: AuthQueryUseCase = mock(AuthQueryUseCase::class.java)
 
-    private val authCommandUseCase = mock(AuthCommandUseCase::class.java)
+    private val authCommandUseCase: AuthCommandUseCase = mock(AuthCommandUseCase::class.java)
 
     @Test
     fun `로그인 성공`() {
@@ -95,6 +98,17 @@ class AuthWebAdaptorTest : RestDocsSupport() {
                 "message", equalTo("잘못된 이메일 또는 비밀번호입니다."),
                 "data", nullValue()
             )
+    }
+
+    @WithMockMember
+    @Test
+    fun `로그아웃 성공`(memberPrincipal: MemberPrincipal) {
+        willDoNothing().given(authCommandUseCase).logout(memberPrincipal)
+
+        given()
+            .post(URI.create("${ApiEndpoint.AUTH}${ApiEndpoint.LOGOUT_ENDPOINT}"))
+            .then()
+            .status(HttpStatus.OK)
     }
 
     override fun controller(): Any {

@@ -1,7 +1,5 @@
 package me.jaeyeop.tickethub.support.domain
 
-import me.jaeyeop.tickethub.support.error.ApiException
-import me.jaeyeop.tickethub.support.error.ErrorCode
 import jakarta.persistence.*
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
@@ -13,7 +11,7 @@ import java.time.LocalDateTime
 abstract class AbstractEntity(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    private val id: Long? = null,
+    protected val id: Long? = null,
 
     @CreatedDate
     @Column(name = "created_at", updatable = false)
@@ -22,8 +20,4 @@ abstract class AbstractEntity(
     @LastModifiedDate
     @Column(name = "modified_at")
     private var modifiedAt: LocalDateTime? = null,
-) : Identifiable {
-
-    final override fun id(): Long = id ?: throw ApiException(ErrorCode.NOT_FOUND_IDENTITY)
-
-}
+)

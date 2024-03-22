@@ -14,6 +14,10 @@ data class ApiResult<T>(
             return ResponseEntity.status(HttpStatus.CREATED).build()
         }
 
+        fun ok(): ResponseEntity<Unit> {
+            return ResponseEntity.status(HttpStatus.OK).build()
+        }
+
         fun <T> ok(data: T): ResponseEntity<ApiResult<T>> {
             val body = ApiResult(data)
 

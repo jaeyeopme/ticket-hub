@@ -2,10 +2,12 @@ package me.jaeyeop.tickethub.auth.adaptor.`in`
 
 import me.jaeyeop.tickethub.auth.adaptor.`in`.request.LoginRequest
 import me.jaeyeop.tickethub.auth.application.port.`in`.AuthQueryUseCase
+import me.jaeyeop.tickethub.auth.domain.MemberPrincipal
 import me.jaeyeop.tickethub.auth.domain.TokenPair
 import me.jaeyeop.tickethub.support.constant.ApiEndpoint
 import me.jaeyeop.tickethub.support.response.ApiResult
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -24,6 +26,13 @@ class AuthWebAdaptor(
         val tokenPair = authCommandUseCase.updateRefreshToken(tokenPayload)
 
         return ApiResult.ok(tokenPair)
+    }
+
+    @PostMapping(ApiEndpoint.LOGOUT_ENDPOINT)
+    fun logout(@AuthenticationPrincipal memberPrincipal: MemberPrincipal): ResponseEntity<Unit> {
+        authCommandUseCase.logout(memberPrincipal)
+
+        return ApiResult.ok()
     }
 
 }

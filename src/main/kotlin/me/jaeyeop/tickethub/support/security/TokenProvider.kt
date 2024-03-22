@@ -1,4 +1,4 @@
-package me.jaeyeop.tickethub.auth.application.port.out
+package me.jaeyeop.tickethub.support.security
 
 import me.jaeyeop.tickethub.auth.domain.TokenPair
 import me.jaeyeop.tickethub.auth.domain.TokenPayload

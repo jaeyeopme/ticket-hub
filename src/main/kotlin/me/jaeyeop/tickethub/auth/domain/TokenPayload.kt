@@ -6,9 +6,7 @@ import io.jsonwebtoken.Claims
 private const val MEMBER_ID_KEY = "memberId"
 private const val MEMBER_ROLE_KEY = "memberRole"
 
-interface TokenPayload {
-
-    fun id(): Long
+interface TokenPayload : MemberPrincipal {
 
     fun role(): Role
 
@@ -21,8 +19,8 @@ interface TokenPayload {
     companion object {
         fun from(claims: Claims): TokenPayload {
             return object : TokenPayload {
-                override fun id() = claims[MEMBER_ID_KEY] as Long
-                override fun role() = claims[MEMBER_ROLE_KEY] as Role
+                override fun id() = (claims[MEMBER_ID_KEY] as Int).toLong()
+                override fun role() = Role.valueOf(claims[MEMBER_ROLE_KEY] as String)
             }
         }
     }
