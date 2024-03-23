@@ -35,7 +35,7 @@ class MemberWebAdaptorTest : RestDocsSupport() {
 
         given()
             .contentType(ContentType.JSON)
-            .body(convert(request))
+            .body(request)
             .post(URI.create(ApiEndpoint.MEMBER))
             .then()
             .status(HttpStatus.CREATED)
@@ -68,7 +68,7 @@ class MemberWebAdaptorTest : RestDocsSupport() {
 
         given()
             .contentType(ContentType.JSON)
-            .body(convert(request))
+            .body(request)
             .post(URI.create(ApiEndpoint.MEMBER))
             .then()
             .status(HttpStatus.CONFLICT)

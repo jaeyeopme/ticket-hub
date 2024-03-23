@@ -40,7 +40,8 @@ class SecurityConfig(
                     .requestMatchers(
                         HttpMethod.POST,
                         ApiEndpoint.MEMBER,
-                        "${ApiEndpoint.AUTH}${ApiEndpoint.LOGIN_ENDPOINT}"
+                        "${ApiEndpoint.AUTH}${ApiEndpoint.LOGIN_ENDPOINT}",
+                        "${ApiEndpoint.AUTH}${ApiEndpoint.REFRESH_ACCESS_TOKEN_ENDPOINT}"
                     )
                     .permitAll()
                 it.anyRequest().authenticated()

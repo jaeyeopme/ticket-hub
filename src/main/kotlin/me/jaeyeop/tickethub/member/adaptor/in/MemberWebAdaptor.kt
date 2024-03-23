@@ -18,7 +18,8 @@ class MemberWebAdaptor(
 ) {
 
     @PostMapping
-    fun create(@Valid @RequestBody request: CreateMemberRequest): ResponseEntity<Unit> {
+    fun create(@Valid @RequestBody request: CreateMemberRequest)
+            : ResponseEntity<Unit> {
         memberCommandUseCase.create(request)
         return ApiResult.created()
     }

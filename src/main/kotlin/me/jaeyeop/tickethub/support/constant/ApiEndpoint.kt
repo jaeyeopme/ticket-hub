@@ -14,6 +14,7 @@ object ApiEndpoint {
      */
     const val LOGIN_ENDPOINT = "/login"
     const val LOGOUT_ENDPOINT = "/logout"
+    const val REFRESH_ACCESS_TOKEN_ENDPOINT = "/refresh"
 }
 
 

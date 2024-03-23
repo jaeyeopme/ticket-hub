@@ -63,8 +63,6 @@ abstract class RestDocsSupport {
     protected fun document(vararg snippets: Snippet): RestDocumentationResultHandler =
         resultHandler.document(*snippets)
 
-    protected fun <T> convert(obj: T): String = objectMapper.writeValueAsString(obj)
-
     protected abstract fun controller(): Any
 
 }
