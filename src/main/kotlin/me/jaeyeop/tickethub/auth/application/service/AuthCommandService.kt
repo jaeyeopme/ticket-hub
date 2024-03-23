@@ -1,14 +1,15 @@
 package me.jaeyeop.tickethub.auth.application.service
 
+import me.jaeyeop.tickethub.auth.adaptor.`in`.request.LoginRequest
 import me.jaeyeop.tickethub.auth.adaptor.`in`.request.RefreshAccessTokenRequest
 import me.jaeyeop.tickethub.auth.application.port.`in`.AuthCommandUseCase
 import me.jaeyeop.tickethub.auth.domain.MemberPrincipal
 import me.jaeyeop.tickethub.auth.domain.TokenPair
-import me.jaeyeop.tickethub.auth.domain.TokenPayload
 import me.jaeyeop.tickethub.member.application.port.out.MemberQueryPort
 import me.jaeyeop.tickethub.support.error.ApiException
 import me.jaeyeop.tickethub.support.error.ErrorCode
 import me.jaeyeop.tickethub.support.security.TokenProvider
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -16,17 +17,20 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class AuthCommandService(
     private val memberQueryPort: MemberQueryPort,
+    private val passwordEncoder: PasswordEncoder,
     private val tokenProvider: TokenProvider
 ) : AuthCommandUseCase {
 
-    override fun updateRefreshToken(tokenPayload: TokenPayload): TokenPair {
-        val tokenPair = tokenProvider.generateTokenPair(tokenPayload)
-        val memberId = tokenPair.tokenPayload.id()
+    override fun login(request: LoginRequest): TokenPair {
+        val member = memberQueryPort.findByEmail(request.email)
+            ?: throw ApiException(ErrorCode.INVALID_EMAIL_OR_PASSWORD)
+        validatePassword(
+            expectedPassword = request.password,
+            actualPassword = member.password
+        )
 
-        val member = findById(memberId)
-        member.login(tokenPair.refreshToken)
-
-        return tokenPair
+        return tokenProvider.generateTokenPair(member)
+            .also { member.login(it.refreshToken) }
     }
 
     override fun refreshAccessToken(request: RefreshAccessTokenRequest): String {
@@ -41,6 +45,14 @@ class AuthCommandService(
     override fun logout(memberPrincipal: MemberPrincipal) {
         val member = findById(memberPrincipal.id())
         member.logout()
+    }
+
+    private fun validatePassword(
+        expectedPassword: String,
+        actualPassword: String
+    ) {
+        if (!passwordEncoder.matches(expectedPassword, actualPassword))
+            throw ApiException(ErrorCode.INVALID_EMAIL_OR_PASSWORD)
     }
 
     private fun findById(memberId: Long) =
