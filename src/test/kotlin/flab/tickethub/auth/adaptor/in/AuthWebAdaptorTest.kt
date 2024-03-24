@@ -51,7 +51,7 @@ class AuthWebAdaptorTest : RestDocsSupport() {
         given()
             .contentType(ContentType.JSON)
             .body(request)
-            .post(URI.create("${ApiEndpoint.AUTH}${ApiEndpoint.LOGIN_ENDPOINT}"))
+            .post(URI.create("${ApiEndpoint.AUTH}/login"))
             .then()
             .status(HttpStatus.OK)
             .body(
@@ -88,7 +88,7 @@ class AuthWebAdaptorTest : RestDocsSupport() {
         given()
             .contentType(ContentType.JSON)
             .body(request)
-            .post(URI.create("${ApiEndpoint.AUTH}${ApiEndpoint.LOGIN_ENDPOINT}"))
+            .post(URI.create("${ApiEndpoint.AUTH}/login"))
             .then()
             .status(HttpStatus.UNAUTHORIZED)
             .body(
@@ -104,7 +104,7 @@ class AuthWebAdaptorTest : RestDocsSupport() {
         willDoNothing().given(authCommandUseCase).logout(memberPrincipal)
 
         given()
-            .post(URI.create("${ApiEndpoint.AUTH}${ApiEndpoint.LOGOUT_ENDPOINT}"))
+            .post(URI.create("${ApiEndpoint.AUTH}/logout"))
             .then()
             .status(HttpStatus.OK)
     }
@@ -118,7 +118,7 @@ class AuthWebAdaptorTest : RestDocsSupport() {
         given()
             .contentType(ContentType.JSON)
             .body(request)
-            .post(URI.create("${ApiEndpoint.AUTH}${ApiEndpoint.REFRESH_ACCESS_TOKEN_ENDPOINT}"))
+            .post(URI.create("${ApiEndpoint.AUTH}/refresh"))
             .then()
             .status(HttpStatus.OK)
             .body("data.accessToken", equalTo("accessToken"))

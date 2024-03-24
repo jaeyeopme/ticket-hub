@@ -22,7 +22,7 @@ class AuthWebAdaptor(
     private val authCommandUseCase: AuthCommandUseCase,
 ) {
 
-    @PostMapping(ApiEndpoint.LOGIN_ENDPOINT)
+    @PostMapping("/login")
     fun login(@RequestBody request: LoginRequest)
             : ResponseEntity<ApiResult<TokenPair>> {
         val tokenPair = authCommandUseCase.login(request)
@@ -30,7 +30,7 @@ class AuthWebAdaptor(
         return ApiResult.ok(tokenPair)
     }
 
-    @PostMapping(ApiEndpoint.LOGOUT_ENDPOINT)
+    @PostMapping("/logout")
     fun logout(@AuthenticationPrincipal memberPrincipal: MemberPrincipal)
             : ResponseEntity<Unit> {
         authCommandUseCase.logout(memberPrincipal)
@@ -38,7 +38,7 @@ class AuthWebAdaptor(
         return ApiResult.ok()
     }
 
-    @PostMapping(ApiEndpoint.REFRESH_ACCESS_TOKEN_ENDPOINT)
+    @PostMapping("/refresh")
     fun refreshAccessToken(@Valid @RequestBody request: RefreshAccessTokenRequest)
             : ResponseEntity<ApiResult<RefreshAccessTokenResponse>> {
         val accessToken = authCommandUseCase.refreshAccessToken(request)
