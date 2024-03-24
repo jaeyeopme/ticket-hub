@@ -13,17 +13,15 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 
 @RestControllerAdvice
 class ApiControllerAdvice {
-
     private val logger = LoggerFactory.getLogger(javaClass)
 
     @ExceptionHandler(ApiException::class)
-    fun handelApiException(e: ApiException)
-            : ResponseEntity<ErrorResult<Any?>> {
+    fun handelApiException(e: ApiException): ResponseEntity<ErrorResult<Any?>> {
         val errorCode = e.errorCode
 
         logging(
             errorCode = errorCode,
-            throwable = e
+            throwable = e,
         )
 
         return ErrorResult.of(e.errorCode, e.data)
@@ -36,11 +34,10 @@ class ApiControllerAdvice {
      * @return Http 401 UNAUTHORIZED
      */
     @ExceptionHandler(AuthenticationException::class)
-    fun authenticationExceptionHandler(e: AuthenticationException)
-            : ResponseEntity<ErrorResult<Unit>> {
+    fun authenticationExceptionHandler(e: AuthenticationException): ResponseEntity<ErrorResult<Unit>> {
         logging(
             errorCode = ErrorCode.UNAUTHORIZED,
-            throwable = e
+            throwable = e,
         )
 
         return ErrorResult.from(ErrorCode.UNAUTHORIZED)
@@ -53,11 +50,10 @@ class ApiControllerAdvice {
      * @return Http 403 FORBIDDEN
      */
     @ExceptionHandler(AccessDeniedException::class)
-    fun accessDeniedExceptionHandler(e: AccessDeniedException)
-            : ResponseEntity<ErrorResult<Unit>> {
+    fun accessDeniedExceptionHandler(e: AccessDeniedException): ResponseEntity<ErrorResult<Unit>> {
         logging(
             errorCode = ErrorCode.FORBIDDEN,
-            throwable = e
+            throwable = e,
         )
 
         return ErrorResult.from(ErrorCode.FORBIDDEN)
@@ -70,11 +66,12 @@ class ApiControllerAdvice {
      * @return 에러 필드를 포함한 Http 400 BAD_REQUEST
      */
     @ExceptionHandler(MethodArgumentNotValidException::class)
-    fun handleMethodArgumentNotValidException(e: MethodArgumentNotValidException)
-            : ResponseEntity<ErrorResult<List<FieldData>>> {
+    fun handleMethodArgumentNotValidException(
+        e: MethodArgumentNotValidException,
+    ): ResponseEntity<ErrorResult<List<FieldData>>> {
         logging(
             errorCode = ErrorCode.INVALID_INPUT_VALUE,
-            throwable = e
+            throwable = e,
         )
 
         val data = e.bindingResult.fieldErrors.map { FieldData.of(it) }
@@ -89,8 +86,7 @@ class ApiControllerAdvice {
      * @return Http 500 INTERNAL_SERVER_ERROR
      */
     @ExceptionHandler(Exception::class)
-    fun exceptionHandler(e: Exception)
-            : ResponseEntity<ErrorResult<Unit>> {
+    fun exceptionHandler(e: Exception): ResponseEntity<ErrorResult<Unit>> {
         logging(
             errorCode = ErrorCode.INTERNAL_SERVER_ERROR,
             throwable = e,
@@ -101,24 +97,26 @@ class ApiControllerAdvice {
 
     private fun logging(
         errorCode: ErrorCode,
-        throwable: Throwable
+        throwable: Throwable,
     ) {
         when (errorCode.logLevel) {
-            LogLevel.ERROR -> logger.error(
-                "${throwable.javaClass.simpleName} : ${throwable.message}",
-                throwable
-            )
+            LogLevel.ERROR ->
+                logger.error(
+                    "${throwable.javaClass.simpleName} : ${throwable.message}",
+                    throwable,
+                )
 
-            LogLevel.WARN -> logger.warn(
-                "${throwable.javaClass.simpleName} : ${throwable.message}",
-                throwable
-            )
+            LogLevel.WARN ->
+                logger.warn(
+                    "${throwable.javaClass.simpleName} : ${throwable.message}",
+                    throwable,
+                )
 
-            else -> logger.info(
-                "${throwable.javaClass.simpleName} : ${throwable.message}",
-                throwable
-            )
+            else ->
+                logger.info(
+                    "${throwable.javaClass.simpleName} : ${throwable.message}",
+                    throwable,
+                )
         }
     }
-
 }

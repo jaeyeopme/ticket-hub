@@ -8,7 +8,4 @@ object ApiEndpoint {
      */
     const val MEMBER = "$V1_API_PATH/members"
     const val AUTH = "$V1_API_PATH/auth"
-
 }
-
-

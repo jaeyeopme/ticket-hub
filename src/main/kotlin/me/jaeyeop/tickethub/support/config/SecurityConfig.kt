@@ -19,9 +19,8 @@ import org.springframework.web.servlet.HandlerExceptionResolver
 @Configuration
 class SecurityConfig(
     private val tokenAuthenticationFilter: TokenAuthenticationFilter,
-    private val handlerExceptionResolver: HandlerExceptionResolver
+    private val handlerExceptionResolver: HandlerExceptionResolver,
 ) {
-
     @Bean
     fun securityFilterChain(httpSecurity: HttpSecurity): SecurityFilterChain {
         httpSecurity
@@ -41,7 +40,7 @@ class SecurityConfig(
                         HttpMethod.POST,
                         ApiEndpoint.MEMBER,
                         "${ApiEndpoint.AUTH}/login",
-                        "${ApiEndpoint.AUTH}/refresh"
+                        "${ApiEndpoint.AUTH}/refresh",
                     )
                     .permitAll()
                 it.anyRequest().authenticated()
@@ -50,7 +49,7 @@ class SecurityConfig(
         httpSecurity
             .addFilterBefore(
                 tokenAuthenticationFilter,
-                UsernamePasswordAuthenticationFilter::class.java
+                UsernamePasswordAuthenticationFilter::class.java,
             )
 
         httpSecurity.exceptionHandling {
@@ -64,18 +63,16 @@ class SecurityConfig(
     private fun resolveException(
         httpServletRequest: HttpServletRequest,
         httpServletResponse: HttpServletResponse,
-        exception: RuntimeException
+        exception: RuntimeException,
     ) {
         handlerExceptionResolver.resolveException(
             httpServletRequest,
             httpServletResponse,
             null,
-            exception
+            exception,
         )
     }
 
     @Bean
-    fun passwordEncoder(): Argon2PasswordEncoder =
-        Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8()
-
+    fun passwordEncoder(): Argon2PasswordEncoder = Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8()
 }

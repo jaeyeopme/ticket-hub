@@ -21,29 +21,26 @@ import org.springframework.web.bind.annotation.RestController
 class AuthWebAdaptor(
     private val authCommandUseCase: AuthCommandUseCase,
 ) {
-
     @PostMapping("/login")
-    fun login(@RequestBody request: LoginRequest)
-            : ResponseEntity<ApiResult<TokenPair>> {
+    fun login(@RequestBody request: LoginRequest): ResponseEntity<ApiResult<TokenPair>> {
         val tokenPair = authCommandUseCase.login(request)
 
         return ApiResult.ok(tokenPair)
     }
 
     @PostMapping("/logout")
-    fun logout(@AuthenticationPrincipal memberPrincipal: MemberPrincipal)
-            : ResponseEntity<Unit> {
+    fun logout(@AuthenticationPrincipal memberPrincipal: MemberPrincipal): ResponseEntity<Unit> {
         authCommandUseCase.logout(memberPrincipal)
 
         return ApiResult.ok()
     }
 
     @PostMapping("/refresh")
-    fun refreshAccessToken(@Valid @RequestBody request: RefreshAccessTokenRequest)
-            : ResponseEntity<ApiResult<RefreshAccessTokenResponse>> {
+    fun refreshAccessToken(
+        @Valid @RequestBody request: RefreshAccessTokenRequest,
+    ): ResponseEntity<ApiResult<RefreshAccessTokenResponse>> {
         val accessToken = authCommandUseCase.refreshAccessToken(request)
 
         return ApiResult.ok(RefreshAccessTokenResponse(accessToken))
     }
-
 }

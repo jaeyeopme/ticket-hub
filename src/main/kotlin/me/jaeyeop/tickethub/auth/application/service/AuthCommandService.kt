@@ -18,15 +18,15 @@ import org.springframework.transaction.annotation.Transactional
 class AuthCommandService(
     private val memberQueryPort: MemberQueryPort,
     private val passwordEncoder: PasswordEncoder,
-    private val tokenProvider: TokenProvider
+    private val tokenProvider: TokenProvider,
 ) : AuthCommandUseCase {
-
     override fun login(request: LoginRequest): TokenPair {
-        val member = memberQueryPort.findByEmail(request.email)
-            ?: throw ApiException(ErrorCode.INVALID_EMAIL_OR_PASSWORD)
+        val member =
+            memberQueryPort.findByEmail(request.email)
+                ?: throw ApiException(ErrorCode.INVALID_EMAIL_OR_PASSWORD)
         validatePassword(
             expectedPassword = request.password,
-            actualPassword = member.password
+            actualPassword = member.password,
         )
 
         return tokenProvider.generateTokenPair(member)
@@ -35,8 +35,9 @@ class AuthCommandService(
 
     override fun refreshAccessToken(request: RefreshAccessTokenRequest): String {
         val tokenPayload = tokenProvider.validateRefreshToken(request.refreshToken)
-        val member = memberQueryPort.findById(tokenPayload.id())
-            ?: throw ApiException(ErrorCode.NOT_FOUND_MEMBER)
+        val member =
+            memberQueryPort.findById(tokenPayload.id())
+                ?: throw ApiException(ErrorCode.NOT_FOUND_MEMBER)
         member.validateRefreshToken(request.refreshToken)
 
         return tokenProvider.generateAccessToken(tokenPayload)
@@ -49,14 +50,13 @@ class AuthCommandService(
 
     private fun validatePassword(
         expectedPassword: String,
-        actualPassword: String
+        actualPassword: String,
     ) {
-        if (!passwordEncoder.matches(expectedPassword, actualPassword))
+        if (!passwordEncoder.matches(expectedPassword, actualPassword)) {
             throw ApiException(ErrorCode.INVALID_EMAIL_OR_PASSWORD)
+        }
     }
 
-    private fun findById(memberId: Long) =
-        memberQueryPort.findById(memberId)
-            ?: throw ApiException(ErrorCode.NOT_FOUND_MEMBER)
-
+    private fun findById(memberId: Long) = memberQueryPort.findById(memberId)
+        ?: throw ApiException(ErrorCode.NOT_FOUND_MEMBER)
 }

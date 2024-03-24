@@ -7,14 +7,13 @@ import org.springframework.validation.FieldError
 data class FieldData private constructor(
     val fieldName: String,
     val value: String,
-    val reason: String
+    val reason: String,
 ) {
     companion object {
-        fun of(it: FieldError) =
-            FieldData(
-                fieldName = it.field,
-                value = it.rejectedValue?.toString().orEmpty(),
-                reason = it.defaultMessage.orEmpty()
-            )
+        fun of(it: FieldError) = FieldData(
+            fieldName = it.field,
+            value = it.rejectedValue?.toString().orEmpty(),
+            reason = it.defaultMessage.orEmpty(),
+        )
     }
 }

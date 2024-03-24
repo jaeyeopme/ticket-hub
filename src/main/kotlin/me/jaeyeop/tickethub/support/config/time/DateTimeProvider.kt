@@ -1,9 +1,7 @@
 package me.jaeyeop.tickethub.support.config.time
 
-import java.util.*
+import java.util.Date
 
 interface DateTimeProvider {
-
     fun nowDate(): Date
-
 }

@@ -25,10 +25,9 @@ import java.nio.charset.Charset
 @JsonTest
 @ExtendWith(
     RestDocumentationExtension::class,
-    MemberPrincipalResolver::class
+    MemberPrincipalResolver::class,
 )
 abstract class RestDocsSupport {
-
     private lateinit var mockMvc: MockMvcRequestSpecification
 
     @Autowired
@@ -41,28 +40,27 @@ abstract class RestDocsSupport {
 
     @BeforeEach
     fun setup(provider: RestDocumentationContextProvider) {
-        mockMvc = RestAssuredMockMvc.given().mockMvc(
-            MockMvcBuilders
-                .standaloneSetup(controller())
-                .setControllerAdvice(ApiControllerAdvice())
-                .setCustomArgumentResolvers(AuthenticationPrincipalArgumentResolver())
-                .defaultResponseCharacterEncoding<StandaloneMockMvcBuilder>(Charset.defaultCharset())
-                .apply<StandaloneMockMvcBuilder>(
-                    documentationConfiguration(provider)
-                        .operationPreprocessors()
-                        .withRequestDefaults(Preprocessors.prettyPrint())
-                        .withResponseDefaults(Preprocessors.prettyPrint())
-                )
-                .setMessageConverters(MappingJackson2HttpMessageConverter(objectMapper))
-                .alwaysDo<StandaloneMockMvcBuilder>(print())
-                .alwaysDo<StandaloneMockMvcBuilder>(resultHandler)
-                .build()
-        )
+        mockMvc =
+            RestAssuredMockMvc.given().mockMvc(
+                MockMvcBuilders
+                    .standaloneSetup(controller())
+                    .setControllerAdvice(ApiControllerAdvice())
+                    .setCustomArgumentResolvers(AuthenticationPrincipalArgumentResolver())
+                    .defaultResponseCharacterEncoding<StandaloneMockMvcBuilder>(Charset.defaultCharset())
+                    .apply<StandaloneMockMvcBuilder>(
+                        documentationConfiguration(provider)
+                            .operationPreprocessors()
+                            .withRequestDefaults(Preprocessors.prettyPrint())
+                            .withResponseDefaults(Preprocessors.prettyPrint()),
+                    )
+                    .setMessageConverters(MappingJackson2HttpMessageConverter(objectMapper))
+                    .alwaysDo<StandaloneMockMvcBuilder>(print())
+                    .alwaysDo<StandaloneMockMvcBuilder>(resultHandler)
+                    .build(),
+            )
     }
 
-    protected fun document(vararg snippets: Snippet): RestDocumentationResultHandler =
-        resultHandler.document(*snippets)
+    protected fun document(vararg snippets: Snippet): RestDocumentationResultHandler = resultHandler.document(*snippets)
 
     protected abstract fun controller(): Any
-
 }

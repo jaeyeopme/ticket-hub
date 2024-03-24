@@ -16,13 +16,12 @@ import org.springframework.web.filter.OncePerRequestFilter
 
 @Component
 class TokenAuthenticationFilter(
-    private val tokenProvider: TokenProvider
+    private val tokenProvider: TokenProvider,
 ) : OncePerRequestFilter() {
-
     override fun doFilterInternal(
         request: HttpServletRequest,
         response: HttpServletResponse,
-        filterChain: FilterChain
+        filterChain: FilterChain,
     ) {
         try {
             val authentication = attemptAuthentication(request)
@@ -46,15 +45,13 @@ class TokenAuthenticationFilter(
 
     private fun createSuccessAuthentication(
         tokenPayload: TokenPayload,
-        request: HttpServletRequest
-    ): Authentication {
-        return UsernamePasswordAuthenticationToken.authenticated(
-            tokenPayload,
-            null,
-            listOf(SimpleGrantedAuthority(tokenPayload.role().name))
-        ).apply {
-            details = WebAuthenticationDetailsSource().buildDetails(request)
-        }
+        request: HttpServletRequest,
+    ): Authentication = UsernamePasswordAuthenticationToken.authenticated(
+        tokenPayload,
+        null,
+        listOf(SimpleGrantedAuthority(tokenPayload.role().name)),
+    ).apply {
+        details = WebAuthenticationDetailsSource().buildDetails(request)
     }
 
     private fun successfulAuthentication(authentication: Authentication) {
@@ -70,5 +67,4 @@ class TokenAuthenticationFilter(
         logger.trace("Cleared SecurityContextHolder")
         logger.trace("Handling authentication failure")
     }
-
 }

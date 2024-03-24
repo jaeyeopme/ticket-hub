@@ -8,20 +8,14 @@ import org.junit.jupiter.api.extension.ParameterResolver
 import org.springframework.security.test.context.TestSecurityContextHolder
 
 class MemberPrincipalResolver : ParameterResolver {
-
     override fun supportsParameter(
         parameterContext: ParameterContext,
-        extensionContext: ExtensionContext
-    ): Boolean {
-        return extensionContext.requiredTestMethod.isAnnotationPresent(WithMockMember::class.java) &&
-                parameterContext.parameter.type == MemberPrincipal::class.java
-    }
+        extensionContext: ExtensionContext,
+    ): Boolean = extensionContext.requiredTestMethod.isAnnotationPresent(WithMockMember::class.java) &&
+        parameterContext.parameter.type == MemberPrincipal::class.java
 
     override fun resolveParameter(
         parameterContext: ParameterContext?,
-        extensionContext: ExtensionContext?
-    ): Any {
-        return TestSecurityContextHolder.getContext().authentication.principal
-    }
-
+        extensionContext: ExtensionContext?,
+    ): Any = TestSecurityContextHolder.getContext().authentication.principal
 }

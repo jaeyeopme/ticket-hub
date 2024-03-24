@@ -15,21 +15,23 @@ import org.mockito.BDDMockito.willDoNothing
 import org.mockito.Mockito.mock
 import org.springframework.http.HttpStatus
 import org.springframework.restdocs.payload.JsonFieldType
-import org.springframework.restdocs.payload.PayloadDocumentation.*
+import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
+import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import java.net.URI
 
 class MemberWebAdaptorTest : RestDocsSupport() {
-
     private val memberCommandUseCase = mock(MemberCommandUseCase::class.java)
 
     @Test
     fun `회원가입 성공`() {
-        val request = CreateMemberRequest(
-            email = "email@email.com",
-            password = "password",
-            name = "name",
-            phoneNumber = "01012345678"
-        )
+        val request =
+            CreateMemberRequest(
+                email = "email@email.com",
+                password = "password",
+                name = "name",
+                phoneNumber = "01012345678",
+            )
 
         willDoNothing().given(memberCommandUseCase).create(request)
 
@@ -49,20 +51,21 @@ class MemberWebAdaptorTest : RestDocsSupport() {
                         fieldWithPath("name").type(JsonFieldType.STRING)
                             .description("이름"),
                         fieldWithPath("phoneNumber").type(JsonFieldType.STRING)
-                            .description("전화번호")
-                    )
-                )
+                            .description("전화번호"),
+                    ),
+                ),
             )
     }
 
     @Test
     fun `회원가입 실패 이메일 중복`() {
-        val request = CreateMemberRequest(
-            email = "email@email.com",
-            password = "password",
-            name = "name",
-            phoneNumber = "01012345678"
-        )
+        val request =
+            CreateMemberRequest(
+                email = "email@email.com",
+                password = "password",
+                name = "name",
+                phoneNumber = "01012345678",
+            )
 
         given(memberCommandUseCase.create(request)).willThrow(ApiException(ErrorCode.DUPLICATED_MEMBER_EMAIL))
 
@@ -73,9 +76,12 @@ class MemberWebAdaptorTest : RestDocsSupport() {
             .then()
             .status(HttpStatus.CONFLICT)
             .body(
-                "code", equalTo("DUPLICATED_MEMBER_EMAIL"),
-                "message", equalTo("이미 존재하는 이메일입니다."),
-                "data", nullValue()
+                "code",
+                equalTo("DUPLICATED_MEMBER_EMAIL"),
+                "message",
+                equalTo("이미 존재하는 이메일입니다."),
+                "data",
+                nullValue(),
             )
             .apply(
                 document(
@@ -87,7 +93,7 @@ class MemberWebAdaptorTest : RestDocsSupport() {
                         fieldWithPath("name").type(JsonFieldType.STRING)
                             .description("이름"),
                         fieldWithPath("phoneNumber").type(JsonFieldType.STRING)
-                            .description("전화번호")
+                            .description("전화번호"),
                     ),
                     responseFields(
                         fieldWithPath("code").type(JsonFieldType.STRING)
@@ -96,13 +102,10 @@ class MemberWebAdaptorTest : RestDocsSupport() {
                             .description("에러 메시지"),
                         fieldWithPath("data").type(JsonFieldType.NULL)
                             .description("에러 데이터"),
-                    )
-                )
+                    ),
+                ),
             )
     }
 
-    override fun controller(): Any {
-        return MemberWebAdaptor(memberCommandUseCase)
-    }
-
+    override fun controller(): Any = MemberWebAdaptor(memberCommandUseCase)
 }

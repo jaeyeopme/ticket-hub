@@ -13,14 +13,11 @@ import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.CredentialsExpiredException
 import java.time.Duration
 import java.time.temporal.ChronoUnit
-import java.util.*
+import java.util.Date
 
 class JwtProviderTest {
-
     private lateinit var tokenProvider: JwtProvider
-
     private lateinit var expiredTokenProvider: JwtProvider
-
     private lateinit var invalidKeyTokenProvider: JwtProvider
 
     @BeforeEach
@@ -31,50 +28,60 @@ class JwtProviderTest {
         val refreshExp = Duration.ofDays(180)
         val now = Date()
 
-        tokenProvider = JwtProvider(
-            jwtProperties = JwtProperties(
-                accessKey = accessKey,
-                refreshKey = refreshKey,
-                accessExp = accessExp,
-                refreshExp = refreshExp,
-            ),
-            dateTimeProvider = object : DateTimeProvider {
-                override fun nowDate() = now
-            }
-        )
+        tokenProvider =
+            JwtProvider(
+                jwtProperties =
+                JwtProperties(
+                    accessKey = accessKey,
+                    refreshKey = refreshKey,
+                    accessExp = accessExp,
+                    refreshExp = refreshExp,
+                ),
+                dateTimeProvider =
+                object : DateTimeProvider {
+                    override fun nowDate() = now
+                },
+            )
 
-        expiredTokenProvider = JwtProvider(
-            jwtProperties = JwtProperties(
-                accessKey = accessKey,
-                refreshKey = refreshKey,
-                accessExp = accessExp,
-                refreshExp = refreshExp,
-            ),
-            dateTimeProvider = object : DateTimeProvider {
-                override fun nowDate() =
-                    Date.from(now.toInstant().minus(10, ChronoUnit.MINUTES))
-            }
-        )
+        expiredTokenProvider =
+            JwtProvider(
+                jwtProperties =
+                JwtProperties(
+                    accessKey = accessKey,
+                    refreshKey = refreshKey,
+                    accessExp = accessExp,
+                    refreshExp = refreshExp,
+                ),
+                dateTimeProvider =
+                object : DateTimeProvider {
+                    override fun nowDate() = Date.from(now.toInstant().minus(10, ChronoUnit.MINUTES))
+                },
+            )
 
-        invalidKeyTokenProvider = JwtProvider(
-            jwtProperties = JwtProperties(
-                accessKey = "INVALID_ACCESS_TOKEN_INVALID_ACCESS_TOKEN_INVALID_ACCESS_TOKEN",
-                refreshKey = "INVALID_REFRESH_TOKEN_INVALID_REFRESH_TOKEN_INVALID_REFRESH_TOKEN",
-                accessExp = accessExp,
-                refreshExp = refreshExp,
-            ),
-            dateTimeProvider = object : DateTimeProvider {
-                override fun nowDate() = now
-            }
-        )
+        invalidKeyTokenProvider =
+            JwtProvider(
+                jwtProperties =
+                JwtProperties(
+                    accessKey = "INVALID_ACCESS_TOKEN_INVALID_ACCESS_TOKEN_INVALID_ACCESS_TOKEN",
+                    refreshKey = "INVALID_REFRESH_TOKEN_INVALID_REFRESH_TOKEN_INVALID_REFRESH_TOKEN",
+                    accessExp = accessExp,
+                    refreshExp = refreshExp,
+                ),
+                dateTimeProvider =
+                object : DateTimeProvider {
+                    override fun nowDate() = now
+                },
+            )
     }
 
     @Test
     fun `엑세스 토큰 검증 성공`() {
-        val tokenPayload = object : TokenPayload {
-            override fun id() = 1L
-            override fun role() = Role.BUYER
-        }
+        val tokenPayload =
+            object : TokenPayload {
+                override fun id() = 1L
+
+                override fun role() = Role.BUYER
+            }
 
         val accessToken = tokenProvider.generateAccessToken(tokenPayload)
 
@@ -83,53 +90,66 @@ class JwtProviderTest {
 
     @Test
     fun `만료된 엑세스 토큰 검증 실패`() {
-        val tokenPayload = object : TokenPayload {
-            override fun id() = 1L
-            override fun role() = Role.BUYER
-        }
+        val tokenPayload =
+            object : TokenPayload {
+                override fun id() = 1L
+
+                override fun role() = Role.BUYER
+            }
 
         val expiredAccessToken = expiredTokenProvider.generateAccessToken(tokenPayload)
 
-        assertThrows<CredentialsExpiredException>(
-            ErrorCode.EXPIRED_TOKEN.message
-        ) { tokenProvider.validateAccessToken(expiredAccessToken) }
+        assertThrows<CredentialsExpiredException>(ErrorCode.EXPIRED_TOKEN.message) {
+            tokenProvider.validateAccessToken(
+                expiredAccessToken,
+            )
+        }
     }
 
     @Test
     fun `잘못된 엑세스 토큰 검증 실패`() {
-        val tokenPayload = object : TokenPayload {
-            override fun id() = 1L
-            override fun role() = Role.BUYER
-        }
+        val tokenPayload =
+            object : TokenPayload {
+                override fun id() = 1L
+
+                override fun role() = Role.BUYER
+            }
 
         val invalidKeyAccessToken = invalidKeyTokenProvider.generateAccessToken(tokenPayload)
 
-        assertThrows<BadCredentialsException>(
-            ErrorCode.INVALID_TOKEN.message
-        ) { tokenProvider.validateAccessToken(invalidKeyAccessToken) }
+        assertThrows<BadCredentialsException>(ErrorCode.INVALID_TOKEN.message) {
+            tokenProvider.validateAccessToken(
+                invalidKeyAccessToken,
+            )
+        }
     }
 
     @Test
     fun `잘못된 형식의 엑세스 토큰 검증 실패`() {
-        val tokenPayload = object : TokenPayload {
-            override fun id() = 1L
-            override fun role() = Role.BUYER
-        }
+        val tokenPayload =
+            object : TokenPayload {
+                override fun id() = 1L
+
+                override fun role() = Role.BUYER
+            }
         val nonPrefixAccessToken =
             tokenProvider.generateAccessToken(tokenPayload).removePrefix(BEARER_PREFIX)
 
-        assertThrows<BadCredentialsException>(
-            ErrorCode.INVALID_TOKEN.message
-        ) { tokenProvider.validateAccessToken(nonPrefixAccessToken) }
+        assertThrows<BadCredentialsException>(ErrorCode.INVALID_TOKEN.message) {
+            tokenProvider.validateAccessToken(
+                nonPrefixAccessToken,
+            )
+        }
     }
 
     @Test
     fun `비어있는 엑세스 토큰 검증 실패`() {
         val blankAccessToken = ""
 
-        assertThrows<BadCredentialsException>(
-            ErrorCode.INVALID_TOKEN.message
-        ) { tokenProvider.validateAccessToken(blankAccessToken) }
+        assertThrows<BadCredentialsException>(ErrorCode.INVALID_TOKEN.message) {
+            tokenProvider.validateAccessToken(
+                blankAccessToken,
+            )
+        }
     }
-
 }

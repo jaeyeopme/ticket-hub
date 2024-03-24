@@ -10,7 +10,7 @@ import jakarta.validation.constraints.Pattern
 data class CreateMemberRequest(
     @field:Pattern(
         regexp = EMAIL_REGEXP,
-        message = EMAIL_MESSAGE
+        message = EMAIL_MESSAGE,
     )
     @field:NotBlank
     val email: String,
@@ -20,8 +20,8 @@ data class CreateMemberRequest(
     val name: String,
     @field:Pattern(
         regexp = PHONE_NUMBER_REGEXP,
-        message = PHONE_NUMBER_MESSAGE
+        message = PHONE_NUMBER_MESSAGE,
     )
     @field:NotBlank
-    val phoneNumber: String
+    val phoneNumber: String,
 )

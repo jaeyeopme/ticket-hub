@@ -21,30 +21,35 @@ import org.mockito.BDDMockito.willDoNothing
 import org.mockito.Mockito.mock
 import org.springframework.http.HttpStatus
 import org.springframework.restdocs.payload.JsonFieldType
-import org.springframework.restdocs.payload.PayloadDocumentation.*
+import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
+import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import java.net.URI
 
 class AuthWebAdaptorTest : RestDocsSupport() {
-
     private val authCommandUseCase: AuthCommandUseCase = mock(AuthCommandUseCase::class.java)
 
     @Test
     fun `로그인 성공`() {
-        val tokenPayload = object : TokenPayload {
-            override fun id() = 1L
-            override fun role() = Role.BUYER
-        }
+        val tokenPayload =
+            object : TokenPayload {
+                override fun id() = 1L
 
-        val tokenPair = TokenPair(
-            accessToken = "accessToken",
-            refreshToken = "refreshToken",
-            tokenPayload = tokenPayload
-        )
+                override fun role() = Role.BUYER
+            }
 
-        val request = LoginRequest(
-            email = "email@email.com",
-            password = "password",
-        )
+        val tokenPair =
+            TokenPair(
+                accessToken = "accessToken",
+                refreshToken = "refreshToken",
+                tokenPayload = tokenPayload,
+            )
+
+        val request =
+            LoginRequest(
+                email = "email@email.com",
+                password = "password",
+            )
 
         given(authCommandUseCase.login(request)).willReturn(tokenPair)
 
@@ -55,8 +60,10 @@ class AuthWebAdaptorTest : RestDocsSupport() {
             .then()
             .status(HttpStatus.OK)
             .body(
-                "data.accessToken", equalTo("accessToken"),
-                "data.refreshToken", equalTo("refreshToken")
+                "data.accessToken",
+                equalTo("accessToken"),
+                "data.refreshToken",
+                equalTo("refreshToken"),
             )
             .apply(
                 document(
@@ -71,17 +78,18 @@ class AuthWebAdaptorTest : RestDocsSupport() {
                             .description("엑세스 토큰"),
                         fieldWithPath("data.refreshToken").type(JsonFieldType.STRING)
                             .description("리프레시 토큰"),
-                    )
-                )
+                    ),
+                ),
             )
     }
 
     @Test
     fun `잘못된 이메일 또는 비밀번호 로그인 실패`() {
-        val request = LoginRequest(
-            email = "email@email.com",
-            password = "password",
-        )
+        val request =
+            LoginRequest(
+                email = "email@email.com",
+                password = "password",
+            )
 
         given(authCommandUseCase.login(request)).willThrow(ApiException(ErrorCode.INVALID_EMAIL_OR_PASSWORD))
 
@@ -92,9 +100,12 @@ class AuthWebAdaptorTest : RestDocsSupport() {
             .then()
             .status(HttpStatus.UNAUTHORIZED)
             .body(
-                "code", equalTo("INVALID_EMAIL_OR_PASSWORD"),
-                "message", equalTo("잘못된 이메일 또는 비밀번호입니다."),
-                "data", nullValue()
+                "code",
+                equalTo("INVALID_EMAIL_OR_PASSWORD"),
+                "message",
+                equalTo("잘못된 이메일 또는 비밀번호입니다."),
+                "data",
+                nullValue(),
             )
     }
 
@@ -131,13 +142,10 @@ class AuthWebAdaptorTest : RestDocsSupport() {
                     responseFields(
                         fieldWithPath("data.accessToken").type(JsonFieldType.STRING)
                             .description("새로운 엑세스 토큰"),
-                    )
-                )
+                    ),
+                ),
             )
     }
 
-    override fun controller(): Any {
-        return AuthWebAdaptor(authCommandUseCase)
-    }
-
+    override fun controller(): Any = AuthWebAdaptor(authCommandUseCase)
 }

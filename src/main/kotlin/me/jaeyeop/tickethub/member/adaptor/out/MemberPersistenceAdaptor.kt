@@ -7,24 +7,16 @@ import org.springframework.stereotype.Component
 
 @Component
 class MemberPersistenceAdaptor(
-    private val memberCrudRepository: MemberCrudRepository
+    private val memberCrudRepository: MemberCrudRepository,
 ) : MemberCommandPort,
     MemberQueryPort {
-
     override fun create(member: Member) {
         memberCrudRepository.save(member)
     }
 
-    override fun existsByEmail(email: String): Boolean {
-        return memberCrudRepository.existsByEmail(email)
-    }
+    override fun existsByEmail(email: String): Boolean = memberCrudRepository.existsByEmail(email)
 
-    override fun findByEmail(email: String): Member? {
-        return memberCrudRepository.findByEmail(email)
-    }
+    override fun findByEmail(email: String): Member? = memberCrudRepository.findByEmail(email)
 
-    override fun findById(memberId: Long): Member? {
-        return memberCrudRepository.findById(memberId).get()
-    }
-
+    override fun findById(memberId: Long): Member? = memberCrudRepository.findById(memberId).get()
 }

@@ -14,21 +14,20 @@ import org.springframework.stereotype.Service
 class MemberCommandService(
     private var memberCommandPort: MemberCommandPort,
     private var memberQueryPort: MemberQueryPort,
-    private var passwordEncoder: PasswordEncoder
+    private var passwordEncoder: PasswordEncoder,
 ) : MemberCommandUseCase {
-
     override fun create(request: CreateMemberRequest) {
         validateExistsEmail(request.email)
 
-        val member = Member.from(
-            request = request,
-            passwordEncoder::encode
-        )
+        val member =
+            Member.from(
+                request = request,
+                passwordEncoder::encode,
+            )
         memberCommandPort.create(member)
     }
 
     private fun validateExistsEmail(email: String) {
         if (memberQueryPort.existsByEmail(email)) throw ApiException(ErrorCode.DUPLICATED_MEMBER_EMAIL)
     }
-
 }
